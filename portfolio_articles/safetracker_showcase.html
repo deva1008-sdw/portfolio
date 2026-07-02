@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SafeTracker - Technical Case Study</title>
+    <title>SafeTracker - Detailed Technical Case Study</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0b0f19;
             --card-bg: rgba(17, 24, 39, 0.7);
-            --border-color: rgba(99, 102, 241, 0.2);
+            --border-color: rgba(99, 102, 241, 0.25);
             --primary: #4f46e5;
             --accent: #10b981;
             --text-main: #f3f4f6;
@@ -26,16 +26,16 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: 'Outfit', sans-serif;
-            line-height: 1.6;
-            padding: 40px 20px;
+            line-height: 1.7;
+            padding: 60px 20px;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 40%);
+                radial-gradient(circle at 10% 20%, rgba(79, 70, 229, 0.15) 0%, transparent 45%),
+                radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 45%);
             background-attachment: fixed;
         }
 
         .container {
-            max-width: 900px;
+            max-width: 950px;
             margin: 0 auto;
         }
 
@@ -43,13 +43,13 @@
         header {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 24px;
-            padding: 40px;
+            border-radius: 28px;
+            padding: 50px 40px;
             margin-bottom: 40px;
-            backdrop-filter: blur(12px);
+            backdrop-filter: blur(16px);
             position: relative;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
         }
 
         header::before {
@@ -65,17 +65,17 @@
         .meta-tags {
             display: flex;
             gap: 12px;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
         .tag {
             background: rgba(79, 70, 229, 0.1);
-            border: 1px solid rgba(79, 70, 229, 0.3);
+            border: 1px solid rgba(79, 70, 229, 0.35);
             color: #818cf8;
-            padding: 4px 12px;
+            padding: 6px 14px;
             border-radius: 100px;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
             font-weight: 600;
@@ -83,83 +83,101 @@
 
         .tag.budget {
             background: rgba(16, 185, 129, 0.1);
-            border: 1px solid rgba(16, 185, 129, 0.3);
+            border: 1px solid rgba(16, 185, 129, 0.35);
             color: #34d399;
         }
 
         h1 {
-            font-size: 2.5rem;
+            font-size: 2.8rem;
             font-weight: 800;
             line-height: 1.2;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
             background: linear-gradient(135deg, #ffffff 30%, #10b981 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .role-text {
-            font-size: 1.1rem;
+            font-size: 1.25rem;
             color: var(--text-muted);
         }
 
-        /* Main Sections */
+        /* Sections */
         section {
             background: var(--card-bg);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            padding: 32px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(12px);
         }
 
         h2 {
-            font-size: 1.5rem;
-            margin-bottom: 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding-bottom: 8px;
+            font-size: 1.7rem;
+            margin-bottom: 24px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 10px;
             color: white;
         }
 
+        h3 {
+            font-size: 1.25rem;
+            margin: 24px 0 12px;
+            color: #cbd5e1;
+        }
+
         p {
-            color: var(--text-muted);
-            margin-bottom: 16px;
+            color: #d1d5db;
+            margin-bottom: 20px;
+            font-size: 1.08rem;
+        }
+
+        ul, ol {
+            margin-bottom: 24px;
+            margin-left: 24px;
+            color: #d1d5db;
+        }
+
+        li {
+            margin-bottom: 8px;
             font-size: 1.05rem;
         }
 
-        /* Technical Grid */
+        /* Tech Grid */
         .tech-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
         }
 
         .tech-item {
-            background: rgba(255, 255, 255, 0.03);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 16px;
-            border-radius: 12px;
+            padding: 20px;
+            border-radius: 16px;
         }
 
         .tech-item strong {
             display: block;
             color: white;
-            font-size: 0.95rem;
-            margin-bottom: 4px;
+            font-size: 1.05rem;
+            margin-bottom: 6px;
         }
 
         .tech-item span {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
         }
 
-        /* Diagram Mock */
+        /* Diagram Container */
         .diagram-container {
-            background: #080b12;
+            background: #05080f;
             border: 1px solid rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 24px;
-            margin: 20px 0;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -167,55 +185,46 @@
 
         .diagram-title {
             font-family: 'Fira Code', monospace;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--primary);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
         }
 
         .diagram-svg {
             width: 100%;
-            max-width: 600px;
+            max-width: 700px;
             height: auto;
         }
 
-        /* Features List */
-        .feature-list {
-            display: grid;
-            gap: 16px;
+        /* Highlight box */
+        .highlight-box {
+            background: rgba(79, 70, 229, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 0 16px 16px 0;
+            margin: 24px 0;
         }
 
-        .feature-card {
-            border-left: 3px solid var(--accent);
-            background: rgba(255, 255, 255, 0.02);
-            padding: 16px 20px;
-            border-radius: 0 12px 12px 0;
-        }
-
-        .feature-card h3 {
+        .highlight-box strong {
             color: white;
-            font-size: 1.1rem;
-            margin-bottom: 6px;
-        }
-
-        .feature-card p {
-            font-size: 0.95rem;
-            margin-bottom: 0;
         }
 
         /* Code Block */
         pre {
-            background: #05070c;
-            padding: 20px;
-            border-radius: 12px;
+            background: #03050a;
+            padding: 24px;
+            border-radius: 16px;
             overflow-x: auto;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            margin: 20px 0;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            margin: 24px 0;
         }
 
         code {
             font-family: 'Fira Code', monospace;
-            font-size: 0.9rem;
-            color: #c9d1d9;
+            font-size: 0.92rem;
+            color: #e2e8f0;
         }
 
         /* Print Settings (Optimized for PDF exports) */
@@ -235,13 +244,13 @@
                 page-break-inside: avoid;
                 color: #1f2937;
             }
-            h1, h2, h3, .tech-item strong, .feature-card h3 {
+            h1, h2, h3, .tech-item strong {
                 color: #111827 !important;
             }
             header::before {
                 background: #4f46e5;
             }
-            p, .tech-item span, .feature-card p, .role-text {
+            p, .tech-item span, .role-text, li, ul, ol {
                 color: #4b5563 !important;
             }
             .tag {
@@ -264,53 +273,59 @@
     <div class="container">
         <header>
             <div class="meta-tags">
-                <span class="tag">Mobile & Web</span>
-                <span class="tag">GPS Background</span>
+                <span class="tag">React Native & Expo</span>
+                <span class="tag">GPS Background Fetch</span>
+                <span class="tag">Offline Cache Queue</span>
                 <span class="tag budget">Mid Range ($600 - $1.5k)</span>
             </div>
-            <h1>SafeTracker (GPS Tracking)</h1>
-            <div class="role-text">Lead Mobile & Backend Developer • Case Study</div>
+            <h1>SafeTracker GPS</h1>
+            <div class="role-text">Lead Mobile & Backend Developer • Detailed Technical Case Study</div>
         </header>
 
         <section>
-            <h2>1. Executive Summary & Goal</h2>
+            <h2>1. Problem Statement & Scope</h2>
             <p>
-                Mobile background tracking systems suffer from aggressive OS battery managers, leading to dropped coordinates. Additionally, privacy-compliant tracking requires strict opt-in indicators.
+                Building geolocation trackers is deceptively simple until the device encounters real-world conditions. High battery consumption and aggressive OS power management (like Android Doze mode or iOS background execution limits) often suspend tracking tasks, leading to jagged, missing coordinate paths.
             </p>
             <p>
-                <strong>SafeTracker</strong> is a consent-first GPS tracking framework combining an Android React Native client, an Express backend, and a Leaflet.js real-time browser monitor dashboard. It features robust offline buffering caches and stable hardware tracking identifiers.
+                Furthermore, users frequently move through areas with weak cellular networks. Standard apps fail to cache coordinates during connection drops, leading to data loss.
             </p>
+            <div class="highlight-box">
+                <strong>Project Goal:</strong> Build a battery-efficient, store-compliant, and consent-first GPS tracking app in React Native using a persistent background task, coupled with a Node.js server that broadcasts coordinates live to Leaflet.js dashboards.
+            </div>
         </section>
 
         <section>
-            <h2>2. Data Pipeline</h2>
+            <h2>2. System Architecture & Queue Dataflow</h2>
             <p>
-                GPS coordinates are recorded on the mobile client, queued locally during connection drops, batch uploaded, and broadcasted to browser map dashboards via WebSockets.
+                The platform is split into a tracking client app and a monitoring server. It utilizes an **Offline-First buffering architecture**:
             </p>
             <div class="diagram-container">
-                <div class="diagram-title">CLIENT TO SERVICE GPS PIPELINE</div>
+                <div class="diagram-title">Mobile-to-Server Data Pipeline</div>
                 <svg class="diagram-svg" viewBox="0 0 600 240" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <rect width="600" height="240" rx="10" fill="#070a13"/>
                     
-                    <rect x="30" y="90" width="110" height="50" rx="8" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
-                    <text x="85" y="115" fill="white" font-size="11" font-family="Outfit" text-anchor="middle" font-weight="bold">React Native App</text>
-                    <text x="85" y="130" fill="#818cf8" font-size="9" font-family="Outfit" text-anchor="middle">(GPS Fetcher)</text>
+                    <!-- Nodes -->
+                    <rect x="20" y="90" width="110" height="50" rx="8" fill="#1e1b4b" stroke="#6366f1" stroke-width="2"/>
+                    <text x="75" y="115" fill="white" font-size="11" font-family="Outfit" text-anchor="middle" font-weight="bold">React Native Client</text>
+                    <text x="75" y="130" fill="#818cf8" font-size="8" font-family="Outfit" text-anchor="middle">(Expo TaskManager)</text>
 
-                    <rect x="180" y="30" width="90" height="50" rx="8" fill="#0c0a09" stroke="#ea580c" stroke-width="2"/>
-                    <text x="225" y="60" fill="white" font-size="11" font-family="Outfit" text-anchor="middle" font-weight="bold">AsyncStorage</text>
+                    <rect x="170" y="30" width="100" height="50" rx="8" fill="#7c2d12" stroke="#ea580c" stroke-width="2"/>
+                    <text x="220" y="60" fill="white" font-size="11" font-family="Outfit" text-anchor="middle" font-weight="bold">AsyncStorage</text>
+                    <text x="220" y="75" fill="#ea580c" font-size="8" font-family="Outfit" text-anchor="middle">(Local Buffer)</text>
 
-                    <rect x="310" y="90" width="110" height="50" rx="8" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+                    <rect x="310" y="90" width="110" height="50" rx="8" fill="#064e3b" stroke="#10b981" stroke-width="2"/>
                     <text x="365" y="115" fill="white" font-size="11" font-family="Outfit" text-anchor="middle" font-weight="bold">Express Server</text>
-                    <text x="365" y="130" fill="#10b981" font-size="9" font-family="Outfit" text-anchor="middle">Render.com</text>
+                    <text x="365" y="130" fill="#10b981" font-size="8" font-family="Outfit" text-anchor="middle">(Node Ingestion)</text>
 
                     <rect x="460" y="90" width="110" height="50" rx="8" fill="#3b0764" stroke="#a855f7" stroke-width="2"/>
                     <text x="515" y="115" fill="white" font-size="11" font-family="Outfit" text-anchor="middle" font-weight="bold">Leaflet.js Map</text>
-                    <text x="515" y="130" fill="#a855f7" font-size="9" font-family="Outfit" text-anchor="middle">Monitor UI</text>
+                    <text x="515" y="130" fill="#a855f7" font-size="8" font-family="Outfit" text-anchor="middle">(Browser UI)</text>
 
-                    <!-- Flows -->
-                    <path d="M 85 90 L 85 55 L 180 55" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
-                    <path d="M 140 115 L 310 115" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
-                    <path d="M 225 80 L 225 115 L 310 115" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow)"/>
+                    <!-- Connections -->
+                    <path d="M 75 90 L 75 55 L 170 55" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+                    <path d="M 130 115 L 310 115" stroke="#6366f1" stroke-width="2" marker-end="url(#arrow)"/>
+                    <path d="M 220 80 L 220 115 L 310 115" stroke="#ea580c" stroke-width="2" marker-end="url(#arrow)"/>
                     <path d="M 420 115 L 460 115" stroke="#10b981" stroke-width="2" marker-end="url(#arrow)"/>
                     <text x="440" y="105" fill="#a855f7" font-size="8" font-family="Fira Code">WS</text>
 
@@ -321,66 +336,80 @@
                     </defs>
                 </svg>
             </div>
+            <h3>Core Engineering Layers:</h3>
+            <ul>
+                <li><strong>Background Location Task:</strong> Configures Expo's `TaskManager` and `Location` library to fetch coordinates every 10 seconds or 5 meters moved, running as a foreground service with a persistent notification bar to avoid OS suspension.</li>
+                <li><strong>Local Cache Queue:</strong> Stores raw location objects in device memory (`AsyncStorage`) during offline gaps. Captures up to 2,000 track-points (approx. 5.5 hours) and uploads them in a single batch post once connection is restored.</li>
+                <li><strong>Hardware Fingerprinting:</strong> Resolves native device IDs using hardware strings (`androidId` / `identifierForVendor`) to uniquely identify devices on the dashboard without username sign-ups.</li>
+                <li><strong>Leaflet.js Mapping Engine:</strong> Render paths dynamically on a dark-themed grid, drawing accuracy boundaries and historical paths using SVG lines.</li>
+            </ul>
         </section>
 
         <section>
-            <h2>3. Technology Stack Breakdown</h2>
+            <h2>3. Technology Stack Selection</h2>
             <div class="tech-grid">
                 <div class="tech-item">
                     <strong>React Native & Expo</strong>
-                    <span>Cross-platform GPS background fetching utilities.</span>
+                    <span>Enables cross-platform iOS and Android compilation. Using Expo's `Location` wrappers ensures proper platform-specific background hooks are executed safely.</span>
                 </div>
                 <div class="tech-item">
-                    <strong>Leaflet.js Maps</strong>
-                    <span>Interactive map UI canvas displaying custom path coordinates.</span>
+                    <strong>AsyncStorage Queue</strong>
+                    <span>Chosen over SQLite for the offline buffer queue. AsyncStorage handles fast key-value serialization quickly, making it ideal for caching coordinate arrays under low-memory footprints.</span>
                 </div>
                 <div class="tech-item">
-                    <strong>Express & WebSockets</strong>
-                    <span>Node.js server pushing locations directly to client browsers.</span>
+                    <strong>Leaflet.js Map Framework</strong>
+                    <span>Lightweight canvas-based maps that can handle rendering thousands of coordinate trace lines without browser memory leaks.</span>
                 </div>
                 <div class="tech-item">
-                    <strong>Local storage cache</strong>
-                    <span>Queue logic buffering 2k offline track-points dynamically.</span>
+                    <strong>Node.js WebSocket (ws)</strong>
+                    <span>Provides dynamic coordinate streams, updating marker positions instantly in the browser UI without long-polling.</span>
                 </div>
             </div>
         </section>
 
         <section>
-            <h2>4. Key Functional Implementations</h2>
-            <div class="feature-list">
-                <div class="feature-card">
-                    <h3>Consent-First Option Screens</h3>
-                    <p>Enforces active opt-in user confirmations and permanent status bar notification toggles, conforming to store privacy policies.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Battery-Efficient Offline Buffering</h3>
-                    <p>Stores raw locations locally during data gaps and uploads in optimized batch posts when networks restore to save device power.</p>
-                </div>
-                <div class="feature-card">
-                    <h3>Stable Device Fingers</h3>
-                    <p>Combines native hardware-linked IDs (`androidId` / `identifierForVendor`) to catalog device coordinates under stable tracks.</p>
-                </div>
-            </div>
-        </section>
+            <h2>4. Code Deep Dive: Background Task Setup</h2>
+            <p>
+                Below is the React Native code initializing the background location task and queueing coordinates offline:
+            </p>
+            <pre><code>// React Native Expo Background Task registration
+import * as TaskManager from 'expo-task-manager';
+import * as Location from 'expo-location';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-        <section>
-            <h2>5. GPS Upload Code Snippet</h2>
-            <p>Below is the Express location ingestion endpoint that accepts coordinate batches and broadcasts updates:</p>
-            <pre><code>// Express endpoint for batch coordinates ingestion
-app.post("/api/location/batch", async (req, res) => {
-    const { deviceId, coordinates } = req.body;
-    if (!deviceId || !Array.isArray(coordinates)) {
-        return res.status(400).json({ error: "Missing parameters" });
+const LOCATION_TASK_NAME = 'background-location-task';
+
+TaskManager.defineTask(LOCATION_TASK_NAME, async ({ data, error }) => {
+    if (error) return;
+    if (data) {
+        const { locations } = data;
+        const newCoords = locations.map(loc => ({
+            latitude: loc.coords.latitude,
+            longitude: loc.coords.longitude,
+            timestamp: loc.timestamp
+        }));
+        
+        // Load existing queue
+        const rawQueue = await AsyncStorage.getItem('gps_queue') || '[]';
+        const queue = JSON.parse(rawQueue);
+        queue.push(...newCoords);
+        
+        // Save back to local storage
+        await AsyncStorage.setItem('gps_queue', JSON.stringify(queue));
     }
-    
-    // Log target and broadcast coordinates via ws
-    broadcastToMonitors(deviceId, coordinates);
-    
-    // Save to server local file system ledger
-    await saveLocationHistory(deviceId, coordinates);
-    
-    res.status(200).json({ status: "synced", count: coordinates.length });
 });</code></pre>
+        </section>
+
+        <section>
+            <h2>5. Privacy & Ethical Compliance</h2>
+            <p>
+                To comply with Android and iOS app store guidelines, the application implements:
+            </p>
+            <ul>
+                <li><strong>Explicit Consent Modal:</strong> Displays an unavoidable opt-in window before initializing background location settings.</li>
+                <li><strong>Foreground Notification:</strong> Displays a persistent Android status notification (`📍 SafeTracker Active`) while the task runs.</li>
+                <li><strong>One-Tap Kill Switch:</strong> Users can completely terminate the background task and clear local buffers directly from the app interface.</li>
+            </ul>
         </section>
     </div>
 </body>
