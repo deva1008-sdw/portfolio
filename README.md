@@ -14,3 +14,6 @@ You can view the interactive, live dashboard of all projects here:
 4. **SafeTracker System** — Consent-first GPS mobile app & tracking mapping system.
 5. **IoT Guardian Pro** — Network attack simulation dashboard with custom PDF audit generation.
 6. **Nexalith Prime Portal** — Animated corporate frontend built in React, Vite, Framer Motion, and tsparticles.
+
+---
+*Last Updated: July 2026*
