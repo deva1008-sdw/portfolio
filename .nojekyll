@@ -1,0 +1,1 @@
+# Bypass Jekyll build engine on GitHub Pages to speed up deployments and prevent Liquid syntax processing
