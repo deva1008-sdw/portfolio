@@ -3,7 +3,7 @@ Welcome to my professional portfolio. This repository hosts a curation of high-f
 
 ## 🚀 Live Portfolio Hub
 You can view the interactive, live dashboard of all projects here:
-👉 **[deva1008-sdw.github.io/portfolio/portfolio_hub.html](https://deva1008-sdw.github.io/portfolio/portfolio_hub.html)**
+👉 **[deva1008-sdw.github.io/portfolio/](https://deva1008-sdw.github.io/portfolio/)**
 
 ---
 
