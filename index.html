@@ -13,6 +13,8 @@
             --magenta: #ff007a;
             --amber: #ffaa00;
             --primary: #1d4ed8;
+            --bg-dark: #05080c;
+            
             --bg-base: #05080c;
             --text-dark: #f8fafc;
             --text-muted: #94a3b8;
@@ -33,7 +35,7 @@
             --btn-outline-text: #f8fafc;
             --btn-outline-hover: rgba(255, 255, 255, 0.05);
             
-            --logo-shadow: drop-shadow(0 0 8px var(--cyan));
+            --logo-shadow: drop-shadow(0 0 6px var(--cyan));
             --grid-opacity: 0.025;
             
             --font-display: 'Orbitron', sans-serif;
@@ -63,8 +65,9 @@
             --btn-outline-text: #1c1917;
             --btn-outline-hover: rgba(28, 25, 23, 0.05);
             
-            --logo-shadow: drop-shadow(0 2px 4px rgba(28, 25, 23, 0.12));
+            --case-card-hover: #ffffff;
             --grid-opacity: 0.05;
+            --logo-shadow: drop-shadow(0 2px 4px rgba(28, 25, 23, 0.12));
             
             /* Saturated Contrast-Safe logo colors */
             --cyan: #0284c7;          /* Rich Ocean Blue */
@@ -156,20 +159,24 @@
             letter-spacing: 0.05em;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 14px;
             text-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
         }
 
         .brand-logo img {
-            width: 36px;
-            height: 36px;
+            width: 38px;
+            height: 38px;
             object-fit: contain;
             filter: var(--logo-shadow);
             transition: filter 0.3s, transform 0.3s;
         }
 
         .brand-logo:hover img {
-            transform: rotate(15deg) scale(1.05);
+            transform: rotate(12deg) scale(1.05);
+        }
+
+        .brand-logo span span {
+            transition: color 0.3s;
         }
 
         .nav-actions-wrapper {
@@ -306,7 +313,7 @@
             font-size: 3.5rem;
             font-weight: 900;
             line-height: 1.1;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             letter-spacing: -0.01em;
             text-transform: uppercase;
             background: linear-gradient(135deg, var(--text-dark) 40%, var(--cyan) 75%, var(--primary) 100%);
@@ -318,11 +325,11 @@
             font-size: 1.1rem;
             color: var(--text-muted);
             line-height: 1.75;
-            margin-bottom: 32px;
+            margin-bottom: 36px;
             max-width: 600px;
         }
 
-        /* Cyberpunk Terminal Window (Highly Interactive Shell Console) */
+        /* Cyberpunk Terminal Window */
         .terminal {
             background: var(--terminal-body);
             border: 1px solid var(--terminal-border);
@@ -1071,8 +1078,8 @@
     <nav>
         <div class="nav-inner">
             <a href="#" class="brand-logo">
-                <img src="k3_logo_clean.png" alt="K3 Logo">
-                K3 DEVSEC LABS
+                <img src="k3_logo_transparent.png" alt="K3 Logo">
+                <span>K3 <span style="color: var(--cyan)">DEVSEC LABS</span></span>
             </a>
             <div class="nav-actions-wrapper">
                 <div class="nav-links">
@@ -1099,9 +1106,9 @@
                 <div class="hero-badge">
                     <span></span> DEPLOY_MODE: INTERACTIVE_SHELL
                 </div>
-                <h1>Tactical Development. <br>Secure Networks.</h1>
+                <h1>ENGINEERING SECURE <br>DIGITAL ARCHITECTURES.</h1>
                 <p class="hero-desc">
-                    We build production-ready full-stack software and analyze target networks from scratch using visual graph architectures. Click the terminal console below to run commands.
+                    We build enterprise-grade full-stack systems, orchestrate high-speed React user interfaces, and model cybersecurity graphs from the ground up.
                 </p>
                 
                 <!-- Cybersecurity Tactical Terminal -->
@@ -1458,7 +1465,7 @@
         function appendTerminalLine(text) {
             const line = document.createElement("div");
             line.className = "terminal-line";
-            line.innerHTML = `> ${text}`;
+            line.innerHTML = `&gt; ${text}`;
             terminalScreen.appendChild(line);
             terminalScreen.scrollTop = terminalScreen.scrollHeight;
         }
@@ -1628,7 +1635,6 @@
                 const dy = dot.y - centerY;
                 const dotAngle = Math.atan2(dy, dx);
                 
-                // Check if sweep angle is passing this dot
                 let diff = sweepAngle % (Math.PI * 2) - dotAngle;
                 if (diff < 0) diff += Math.PI * 2;
 
