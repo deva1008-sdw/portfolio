@@ -3,51 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>K3 DEVSEC LABS - Widescreen Cyber Engineering Hub</title>
+    <title>K3 DEVSEC LABS - Tactical Cyber Engineering Console</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         /* Color System & Variables */
         :root {
-            /* Default Dark Theme Variables */
+            /* Cyberpunk Dark Mode (Default) */
             --cyan: #00f0ff;
             --magenta: #ff007a;
+            --amber: #ffaa00;
             --primary: #1d4ed8;
-            --bg-dark: #06080c;
-            
-            --bg-base: #06080c;
-            --text-light: #f8fafc;
+            --bg-base: #05080c;
             --text-dark: #f8fafc;
             --text-muted: #94a3b8;
-            --card-bg: rgba(10, 15, 26, 0.7);
-            --border: rgba(0, 240, 255, 0.1);
-            --border-glow: rgba(0, 240, 255, 0.35);
-            --nav-bg: rgba(6, 8, 12, 0.75);
+            
+            --card-bg: rgba(10, 15, 26, 0.75);
+            --border: rgba(0, 240, 255, 0.12);
+            --border-glow: rgba(0, 240, 255, 0.4);
+            --nav-bg: rgba(5, 8, 12, 0.8);
+            
+            --terminal-header: #0d1527;
+            --terminal-body: rgba(6, 10, 20, 0.9);
+            --terminal-border: rgba(0, 240, 255, 0.15);
+            --terminal-text: #a5f3fc;
             
             --btn-primary-bg: #f8fafc;
-            --btn-primary-text: #06080c;
+            --btn-primary-text: #05080c;
             --btn-outline-border: #f8fafc;
             --btn-outline-text: #f8fafc;
             --btn-outline-hover: rgba(255, 255, 255, 0.05);
             
-            --case-card-hover: rgba(10, 15, 26, 0.95);
-            --grid-opacity: 0.015;
             --logo-shadow: drop-shadow(0 0 8px var(--cyan));
+            --grid-opacity: 0.025;
             
             --font-display: 'Orbitron', sans-serif;
             --font-sans: 'Outfit', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
 
-        /* Light Theme Override Variables */
+        /* Diagnostic Light Mode Override */
         body.light-theme {
             --bg-base: #f3efe9;       /* Linen/Cream */
-            --text-light: #1c1917;    /* Charcoal */
-            --text-dark: #1c1917;
-            --text-muted: #4b5563;    /* Saturated slate gray for readability */
-            --card-bg: rgba(255, 255, 255, 0.6); /* More solid glass card */
-            --border: rgba(28, 25, 23, 0.1);    /* High-contrast border */
+            --text-dark: #1c1917;     /* Charcoal */
+            --text-muted: #4b5563;    /* Slate grey */
+            
+            --card-bg: rgba(255, 255, 255, 0.65);
+            --border: rgba(28, 25, 23, 0.12);
             --border-glow: rgba(29, 78, 216, 0.35);
             --nav-bg: rgba(243, 239, 233, 0.9);
+            
+            --terminal-header: #edece6;
+            --terminal-body: rgba(255, 255, 255, 0.9);
+            --terminal-border: rgba(28, 25, 23, 0.15);
+            --terminal-text: #1c1917;
             
             --btn-primary-bg: #1c1917;
             --btn-primary-text: #ffffff;
@@ -55,13 +63,13 @@
             --btn-outline-text: #1c1917;
             --btn-outline-hover: rgba(28, 25, 23, 0.05);
             
-            --case-card-hover: #ffffff;
-            --grid-opacity: 0.04;
             --logo-shadow: drop-shadow(0 2px 4px rgba(28, 25, 23, 0.12));
+            --grid-opacity: 0.05;
             
-            /* Saturated Contrast-Safe logo colors for light mode text */
+            /* Saturated Contrast-Safe logo colors */
             --cyan: #0284c7;          /* Rich Ocean Blue */
-            --magenta: #be185d;       /* Deep Saturated Magenta */
+            --magenta: #be185d;       /* Deep Magenta */
+            --amber: #b45309;         /* Muted Gold/Amber */
             --primary: #1d4ed8;       /* Deep Royal Blue */
         }
 
@@ -86,28 +94,18 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* Background Particle Canvas */
-        #particle-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-            pointer-events: none;
-        }
-
+        /* Cyberpunk Grid Background Overlay */
         .cyber-grid {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2;
+            z-index: 1;
             background-image: 
                 linear-gradient(rgba(0, 240, 255, var(--grid-opacity)) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 240, 255, var(--grid-opacity)) 1px, transparent 1px);
-            background-size: 50px 50px;
+            background-size: 60px 60px;
             pointer-events: none;
             transition: background-image 0.3s;
         }
@@ -216,7 +214,7 @@
             background: linear-gradient(135deg, var(--cyan), var(--primary));
             color: #06080c !important;
             padding: 12px 24px;
-            border-radius: 8px;
+            border-radius: 6px;
             font-weight: 700;
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
@@ -240,35 +238,47 @@
             z-index: 10;
         }
 
-        /* Hero Section */
+        /* Hero Split Section */
         .hero {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: space-between;
-            padding: 120px 0 140px;
-            gap: 60px;
+            padding: 80px 0 120px;
+            gap: 40px;
         }
 
-        .hero-content {
-            flex: 1.3;
+        .hero-left {
+            flex: 1.1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero-right {
+            flex: 0.9;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            min-height: 480px;
         }
 
         .hero-badge {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            background: rgba(0, 240, 255, 0.03);
+            background: rgba(0, 240, 255, 0.04);
             color: var(--cyan);
             border: 1px solid var(--border);
             padding: 6px 16px;
             border-radius: 4px;
             font-size: 0.8rem;
             font-weight: 700;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.12em;
             text-transform: uppercase;
             font-family: var(--font-display);
-            margin-bottom: 32px;
-            transition: color 0.3s, background-color 0.3s, border-color 0.3s;
+            margin-bottom: 24px;
+            align-self: flex-start;
         }
 
         .hero-badge span {
@@ -278,100 +288,207 @@
             border-radius: 50%;
             box-shadow: 0 0 8px var(--cyan);
             animation: pulse 1.5s infinite;
-            transition: background-color 0.3s;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            50% { transform: scale(1.3); opacity: 1; }
-            100% { transform: scale(0.8); opacity: 0.5; }
         }
 
         .hero h1 {
             font-family: var(--font-display);
-            font-size: 4.5rem;
+            font-size: 3.5rem;
             font-weight: 900;
-            line-height: 1.05;
-            margin-bottom: 28px;
-            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
             text-transform: uppercase;
             background: linear-gradient(135deg, var(--text-dark) 40%, var(--cyan) 75%, var(--primary) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
-        .hero h1 span.scramble {
-            font-family: var(--font-mono);
-            color: var(--cyan);
-            transition: color 0.3s;
-        }
-
         .hero-desc {
-            font-size: 1.25rem;
+            font-size: 1.1rem;
             color: var(--text-muted);
-            line-height: 1.8;
-            margin-bottom: 48px;
-            max-width: 680px;
-            transition: color 0.3s;
+            line-height: 1.75;
+            margin-bottom: 32px;
+            max-width: 600px;
         }
 
-        .hero-actions {
+        /* Cyberpunk Terminal Window */
+        .terminal {
+            background: var(--terminal-body);
+            border: 1px solid var(--terminal-border);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            color: var(--terminal-text);
+            transition: all 0.3s;
             display: flex;
-            gap: 20px;
+            flex-direction: column;
+            height: 340px;
+            width: 100%;
+        }
+
+        .terminal:hover {
+            border-color: var(--border-glow);
+        }
+
+        .terminal-header {
+            background: var(--terminal-header);
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid var(--terminal-border);
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 8px;
+        }
+
+        .terminal-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .dot-red { background-color: #ef4444; }
+        .dot-yellow { background-color: #eab308; }
+        .dot-green { background-color: #22c55e; }
+
+        .terminal-title {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        .terminal-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            scroll-behavior: smooth;
+        }
+
+        .terminal-line {
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
+
+        .terminal-line span.cyan { color: var(--cyan); }
+        .terminal-line span.magenta { color: var(--magenta); }
+        .terminal-line span.amber { color: var(--amber); }
+
+        .terminal-action-row {
+            padding: 12px 20px;
+            background: var(--terminal-header);
+            border-top: 1px solid var(--terminal-border);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
         }
 
-        .hero-visual {
-            flex: 0.7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .hero-visual-card {
+        /* Tactical Node Map HUD */
+        .hud-wrapper {
             background: var(--card-bg);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 0 50px rgba(0, 240, 255, 0.03);
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 20px;
+            overflow: hidden;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        .hero-visual-card::before {
-            content: '';
+        .hud-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-family: var(--font-display);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--cyan);
+            letter-spacing: 0.05em;
+        }
+
+        .node-canvas-container {
+            flex-grow: 1;
+            position: relative;
+            width: 100%;
+            height: 380px;
+        }
+
+        #node-canvas {
             position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            border-radius: 24px;
-            background: linear-gradient(135deg, var(--cyan), transparent, var(--magenta));
-            z-index: -1;
-            opacity: 0.15;
-            transition: opacity 0.5s;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
         }
 
-        .hero-visual-card:hover {
-            transform: translateY(-8px) rotate(1deg);
-            border-color: var(--border-glow);
-            box-shadow: 0 0 60px rgba(0, 240, 255, 0.12);
+        .hud-info-card {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(6, 10, 20, 0.85);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-glow);
+            border-radius: 8px;
+            padding: 14px 20px;
+            pointer-events: none;
+            display: none;
+            flex-direction: column;
+            gap: 4px;
+            animation: fadeIn 0.2s ease-out;
+            z-index: 10;
         }
 
-        .hero-visual-card:hover::before {
-            opacity: 0.4;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        .hero-visual-card img {
-            width: 280px;
-            height: 280px;
-            object-fit: contain;
-            filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.15));
+        .hud-info-title {
+            font-family: var(--font-display);
+            font-weight: 800;
+            color: var(--cyan);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .hud-info-desc {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            line-height: 1.4;
+        }
+
+        .hud-info-stats {
+            display: flex;
+            gap: 16px;
+            margin-top: 6px;
+            border-top: 1px solid rgba(0, 240, 255, 0.08);
+            padding-top: 6px;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            color: var(--cyan);
         }
 
         /* Section Styling */
         section {
             padding: 120px 0;
             border-top: 1px solid rgba(0, 240, 255, 0.05);
+            position: relative;
+            z-index: 10;
         }
 
         .section-header {
@@ -390,7 +507,6 @@
             display: block;
             margin-bottom: 16px;
             text-shadow: 0 0 8px rgba(0, 240, 255, 0.15);
-            transition: color 0.3s;
         }
 
         .section-header h2 {
@@ -406,10 +522,9 @@
         .section-header p {
             font-size: 1.15rem;
             color: var(--text-muted);
-            transition: color 0.3s;
         }
 
-        /* Services Grid (Store) */
+        /* Services Grid */
         .services-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
@@ -760,7 +875,7 @@
             box-shadow: 0 0 25px rgba(0, 240, 255, 0.45);
         }
 
-        /* Live Terminal Console */
+        /* Live Terminal Widget */
         .console-widget {
             position: fixed;
             bottom: 24px;
@@ -875,20 +990,12 @@
 
         @media (max-width: 992px) {
             .hero {
-                flex-direction: column-reverse;
-                text-align: center;
-                padding: 80px 0 100px;
+                flex-direction: column;
+                padding: 40px 0 60px;
                 gap: 40px;
             }
-            .hero-desc {
-                margin: 0 auto 40px;
-            }
-            .hero-actions {
-                flex-direction: column;
-                gap: 16px;
-                width: 100%;
-                max-width: 320px;
-                margin: 0 auto;
+            .hero-left, .hero-right {
+                flex: 1;
             }
             .product-card {
                 flex-direction: column;
@@ -913,7 +1020,7 @@
                 display: none;
             }
             .hero h1 {
-                font-size: 3rem;
+                font-size: 2.8rem;
             }
             .booking-card {
                 padding: 60px 24px;
@@ -926,8 +1033,7 @@
 </head>
 <body>
 
-    <!-- Interactive Background Particles -->
-    <canvas id="particle-canvas"></canvas>
+    <!-- Cyberpunk Grid Overlay -->
     <div class="cyber-grid"></div>
     
     <!-- Navigation Header -->
@@ -956,27 +1062,59 @@
 
     <div class="container">
         
-        <!-- Hero Section -->
+        <!-- Hero Split Console Section -->
         <section class="hero">
-            <div class="hero-content">
+            <div class="hero-left">
                 <div class="hero-badge">
-                    <span></span> DEPLOY_MODE: ESCROW_SECURE
+                    <span></span> DEPLOY_MODE: NEOMAP_CONSOLE
                 </div>
-                <h1 id="hero-title" data-value="DIGITAL ENGINEERING. SECURE INFRASTRUCTURE.">DIGITAL ENGINEERING. SECURE INFRASTRUCTURE.</h1>
+                <h1>Tactical Development. <br>Secure Networks.</h1>
                 <p class="hero-desc">
-                    We build high-performance full-stack web platforms, design pixel-perfect user experiences running at a fluid 60 FPS, and model cybersecurity graphs from scratch.
+                    We build production-ready full-stack software and analyze target networks from scratch using visual graph architectures. Check our live console diagnostics below.
                 </p>
-                <div class="hero-actions">
-                    <a href="#services" class="btn btn-primary">Our Services</a>
-                    <a href="#products" class="btn btn-outline">Framer Template Shop</a>
-                    
-                    <!-- Secondary Hero Contra Hire Embed -->
-                    <div class="contra-hire-me-button" data-analyticsUserId="a2a7628f-7c1f-4533-8aa0-9786ac93a94e" data-theme="dark" data-username="tulasi_krishnakumar_e6i7saj7"></div>
+                
+                <!-- Cybersecurity Tactical Terminal -->
+                <div class="terminal">
+                    <div class="terminal-header">
+                        <div class="terminal-dots">
+                            <span class="terminal-dot dot-red"></span>
+                            <span class="terminal-dot dot-yellow"></span>
+                            <span class="terminal-dot dot-green"></span>
+                        </div>
+                        <div class="terminal-title">K3_DIAGNOSTIC_SHELL_v1.0.9</div>
+                        <div></div>
+                    </div>
+                    <div class="terminal-body" id="terminal-screen">
+                        <!-- Simulated lines injected via JS -->
+                    </div>
+                    <div class="terminal-action-row">
+                        <span style="color: var(--text-muted); font-size: 0.75rem;">Status: Waiting for Command</span>
+                        <button id="scan-trigger" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.75rem; border-radius: 4px; border-color: var(--border);">Run Security Audit</button>
+                    </div>
                 </div>
             </div>
-            <div class="hero-visual">
-                <div class="hero-visual-card">
-                    <img src="k3_logo_full_cream.png" alt="K3 DevSec Labs Seal">
+
+            <div class="hero-right">
+                <!-- Tactical Node Map HUD Wrapper -->
+                <div class="hud-wrapper">
+                    <div class="hud-header">
+                        <span>SYS_NERVOUS_SYSTEM_MONITOR</span>
+                        <span style="color: var(--cyan); animation: pulse 1.5s infinite;">● REALTIME</span>
+                    </div>
+                    <div class="node-canvas-container">
+                        <canvas id="node-canvas"></canvas>
+                        
+                        <!-- Floating HUD Node Info Details Card -->
+                        <div class="hud-info-card" id="hud-details">
+                            <span class="hud-info-title" id="hud-node-name">API Gateway</span>
+                            <p class="hud-info-desc" id="hud-node-desc">Directs external REST calls to backend clusters.</p>
+                            <div class="hud-info-stats">
+                                <span>LOAD: <span id="hud-node-load">12%</span></span>
+                                <span>LATENCY: <span id="hud-node-latency">2.1ms</span></span>
+                                <span>STATUS: <span style="color: var(--cyan)">SECURE</span></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -1192,11 +1330,11 @@
 
     </div>
 
-    <!-- Live Console -->
+    <!-- Live Widget Ticker -->
     <div class="console-widget">
         <div class="console-header">
             <span>K3 SYSTEM STATUS</span>
-            <span style="color: var(--accent);">● ONLINE</span>
+            <span style="color: var(--cyan);">● ONLINE</span>
         </div>
         <div class="console-row">
             <span>NETWORK LATENCY</span>
@@ -1237,13 +1375,11 @@
             contraButtons.forEach(btn => {
                 btn.setAttribute("data-theme", themeMode);
             });
-            // Re-execute SDK rendering if global Contra variable exists
             if (window.Contra && window.Contra.render) {
                 window.Contra.render();
             }
         }
 
-        // Load saved preference or default to dark
         const currentTheme = localStorage.getItem("theme");
         if (currentTheme === "light") {
             document.body.classList.add("light-theme");
@@ -1268,153 +1404,235 @@
             localStorage.setItem("theme", theme);
         });
 
-        // 2. Particle Background System
-        const canvas = document.getElementById('particle-canvas');
-        const ctx = canvas.getContext('2d');
+        // 2. Cyber Terminal Simulator Engine
+        const terminalScreen = document.getElementById("terminal-screen");
+        const scanTrigger = document.getElementById("scan-trigger");
 
-        let width = canvas.width = window.innerWidth;
-        let height = canvas.height = window.innerHeight;
+        const bootLogs = [
+            "Initializing K3 security shell connection...",
+            "Established secure link to <span class='cyan'>K3_DEVSEC_LABS</span> node list.",
+            "Loading auditing libraries...",
+            "Loading <span class='amber'>CNS (Cyber Nervous System)</span> vulnerability models...",
+            "Running network topology mapping...",
+            "Scan complete: <span class='cyan'>5 projects</span> analyzed. 0 active security breaches found.",
+            "Ready for diagnostic commands."
+        ];
 
-        window.addEventListener('resize', () => {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        });
-
-        const particles = [];
-        const numParticles = 60;
-        const maxDist = 120;
-        let mouse = { x: null, y: null };
-
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.clientX;
-            mouse.y = e.clientY;
-        });
-
-        window.addEventListener('mouseleave', () => {
-            mouse.x = null;
-            mouse.y = null;
-        });
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.7;
-                this.vy = (Math.random() - 0.5) * 0.7;
-                this.r = Math.random() * 2 + 1;
-            }
-
-            update() {
-                if (mouse.x !== null && mouse.y !== null) {
-                    const dx = mouse.x - this.x;
-                    const dy = mouse.y - this.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    if (dist < 200) {
-                        this.x += dx * 0.01;
-                        this.y += dy * 0.01;
-                    }
-                }
-
-                this.x += this.vx;
-                this.y += this.vy;
-
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
-                
-                // Color matches light/dark theme
-                if (document.body.classList.contains("light-theme")) {
-                    ctx.fillStyle = 'rgba(2, 132, 199, 0.4)';  // Logo blue particles in light mode
-                } else {
-                    ctx.fillStyle = 'rgba(0, 240, 255, 0.4)';   // Cyan particles in dark mode
-                }
-                ctx.fill();
-            }
+        let logQueue = [...bootLogs];
+        
+        function appendTerminalLine(text) {
+            const line = document.createElement("div");
+            line.className = "terminal-line";
+            line.innerHTML = `> ${text}`;
+            terminalScreen.appendChild(line);
+            terminalScreen.scrollTop = terminalScreen.scrollHeight;
         }
 
-        for (let i = 0; i < numParticles; i++) {
-            particles.push(new Particle());
+        function runTerminalBoot() {
+            terminalScreen.innerHTML = "";
+            let index = 0;
+            function printNext() {
+                if (index < bootLogs.length) {
+                    appendTerminalLine(bootLogs[index]);
+                    index++;
+                    setTimeout(printNext, Math.random() * 400 + 150);
+                }
+            }
+            printNext();
         }
 
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
+        runTerminalBoot();
 
-            particles.forEach(p => {
-                p.update();
-                p.draw();
+        // Security scan sequence
+        scanTrigger.addEventListener("click", () => {
+            appendTerminalLine("<span class='amber'>Launching K3 security port scan traceroute...</span>");
+            scanTrigger.disabled = true;
+            
+            setTimeout(() => {
+                appendTerminalLine("Tracing hops to active API gateway nodes...");
+            }, 600);
+            
+            setTimeout(() => {
+                appendTerminalLine("Ping complete: latency <span class='cyan'>1.8ms</span>. Status: <span class='cyan'>SECURE</span>");
+            }, 1200);
+
+            setTimeout(() => {
+                appendTerminalLine("Graph DB analysis: Neo4j clusters synchronized successfully.");
+            }, 1800);
+
+            setTimeout(() => {
+                appendTerminalLine("Audit complete. <span class='cyan'>System standing optimal.</span>");
+                scanTrigger.disabled = false;
+                triggerMapPulsar(); // Triggers a pulse animation on the canvas map!
+            }, 2400);
+        });
+
+        // 3. Interactive HUD Node Canvas Map
+        const canvas = document.getElementById("node-canvas");
+        const ctx = canvas.getContext("2d");
+        const hudDetails = document.getElementById("hud-details");
+        const hudNodeName = document.getElementById("hud-node-name");
+        const hudNodeDesc = document.getElementById("hud-node-desc");
+        const hudNodeLoad = document.getElementById("hud-node-load");
+        const hudNodeLatency = document.getElementById("hud-node-latency");
+
+        let canvasWidth = canvas.width = canvas.parentElement.clientWidth;
+        let canvasHeight = canvas.height = canvas.parentElement.clientHeight;
+
+        window.addEventListener("resize", () => {
+            if (canvas.parentElement) {
+                canvasWidth = canvas.width = canvas.parentElement.clientWidth;
+                canvasHeight = canvas.height = canvas.parentElement.clientHeight;
+            }
+        });
+
+        // Nodes setup
+        const nodes = [
+            { id: 1, name: "Escrow Shield", desc: "Contra escrow connection manager securing milestones.", x: 0.5, y: 0.15, load: "0%", latency: "0.2ms", color: "#ffaa00" },
+            { id: 2, name: "API Gateway", desc: "Central entrypoint distributing server commands securely.", x: 0.25, y: 0.45, load: "14%", latency: "1.4ms" },
+            { id: 3, name: "Graph DB Engine", desc: "Neo4j mapping cluster triaging project dependency models.", x: 0.5, y: 0.5, load: "28%", latency: "2.1ms" },
+            { id: 4, name: "LLM Agent Engine", desc: "Automated vulnerability scanner reasoning threat vectors.", x: 0.75, y: 0.45, load: "8%", latency: "5.4ms" },
+            { id: 5, name: "Nexalith Store", desc: "Framer Template repository & payment gateway validator.", x: 0.5, y: 0.8, load: "2%", latency: "1.2ms" }
+        ];
+
+        // Connection lines setup
+        const connections = [
+            { from: 1, to: 3 },
+            { from: 2, to: 3 },
+            { from: 4, to: 3 },
+            { from: 5, to: 3 },
+            { from: 2, to: 1 },
+            { from: 4, to: 1 }
+        ];
+
+        let hoveredNode = null;
+        let mapPulseTime = 0;
+
+        function triggerMapPulsar() {
+            mapPulseTime = 1; // Starts a global sweep wave
+        }
+
+        // Mouse hover checker
+        canvas.addEventListener("mousemove", (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            let found = null;
+            nodes.forEach(node => {
+                const px = node.x * canvasWidth;
+                const py = node.y * canvasHeight;
+                const dist = Math.sqrt((mouseX - px)**2 + (mouseY - py)**2);
+                if (dist < 18) {
+                    found = node;
+                }
             });
 
-            // Draw connection lines
-            const isLight = document.body.classList.contains("light-theme");
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const p1 = particles[i];
-                    const p2 = particles[j];
-                    const dx = p1.x - p2.x;
-                    const dy = p1.y - p2.y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-
-                    if (dist < maxDist) {
-                        ctx.beginPath();
-                        ctx.moveTo(p1.x, p1.y);
-                        ctx.lineTo(p2.x, p2.y);
-                        
-                        if (isLight) {
-                            ctx.strokeStyle = `rgba(2, 132, 199, ${0.15 * (1 - dist / maxDist)})`; // Logo blue lines
-                        } else {
-                            ctx.strokeStyle = `rgba(0, 240, 255, ${0.15 * (1 - dist / maxDist)})`; // Cyan lines
-                        }
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    }
+            if (found !== hoveredNode) {
+                hoveredNode = found;
+                if (hoveredNode) {
+                    hudNodeName.textContent = hoveredNode.name;
+                    hudNodeDesc.textContent = hoveredNode.desc;
+                    hudNodeLoad.textContent = hoveredNode.load;
+                    hudNodeLatency.textContent = hoveredNode.latency;
+                    hudDetails.style.display = "flex";
+                } else {
+                    hudDetails.style.display = "none";
                 }
             }
-
-            requestAnimationFrame(animate);
-        }
-        animate();
-
-        // 3. Text Decryptor/Scrambler Effect
-        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$&*<>/[]";
-        let interval = null;
-
-        function startScramble(element) {
-            let iteration = 0;
-            clearInterval(interval);
-            const originalText = element.dataset.value;
-
-            interval = setInterval(() => {
-                element.innerHTML = originalText
-                    .split("")
-                    .map((char, index) => {
-                        if(char === " " || char === "." || char === "/") return char;
-                        if(index < iteration) {
-                            return originalText[index];
-                        }
-                        return `<span class="scramble">${letters[Math.floor(Math.random() * letters.length)]}</span>`;
-                    })
-                    .join("");
-                
-                if(iteration >= originalText.length){ 
-                    clearInterval(interval);
-                }
-                
-                iteration += 1 / 3;
-            }, 25);
-        }
-
-        const heroTitle = document.getElementById("hero-title");
-        startScramble(heroTitle); // Initial page load scramble
-
-        heroTitle.addEventListener("mouseover", () => {
-            startScramble(heroTitle); // Hover scramble
         });
 
-        // 4. Live System Monitor Fluctuations
+        function animateNodes() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            const isLight = document.body.classList.contains("light-theme");
+            
+            // Core accent colors based on theme
+            const primaryGlow = isLight ? "#0284c7" : "#00f0ff";
+            const lineStroke = isLight ? "rgba(2, 132, 199, 0.12)" : "rgba(0, 240, 255, 0.12)";
+
+            // Draw connection lines
+            connections.forEach(conn => {
+                const fromNode = nodes.find(n => n.id === conn.from);
+                const toNode = nodes.find(n => n.id === conn.to);
+                const fx = fromNode.x * canvasWidth;
+                const fy = fromNode.y * canvasHeight;
+                const tx = toNode.x * canvasWidth;
+                const ty = toNode.y * canvasHeight;
+
+                ctx.beginPath();
+                ctx.moveTo(fx, fy);
+                ctx.lineTo(tx, ty);
+                ctx.strokeStyle = lineStroke;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Draw moving electron/pulse along connections
+                const time = (Date.now() / 2500) % 1;
+                const ex = fx + (tx - fx) * time;
+                const ey = fy + (ty - fy) * time;
+
+                ctx.beginPath();
+                ctx.arc(ex, ey, 3, 0, Math.PI * 2);
+                ctx.fillStyle = primaryGlow;
+                ctx.fill();
+            });
+
+            // Draw global pulse wave if active
+            if (mapPulseTime > 0) {
+                mapPulseTime += 0.015;
+                if (mapPulseTime > 2) mapPulseTime = 0;
+
+                ctx.beginPath();
+                ctx.arc(canvasWidth * 0.5, canvasHeight * 0.5, mapPulseTime * 180, 0, Math.PI * 2);
+                ctx.strokeStyle = `rgba(0, 240, 255, ${0.3 * (1 - mapPulseTime/2)})`;
+                ctx.lineWidth = 1.5;
+                ctx.stroke();
+            }
+
+            // Draw nodes
+            nodes.forEach(node => {
+                const px = node.x * canvasWidth;
+                const py = node.y * canvasHeight;
+                const isHovered = hoveredNode === node;
+
+                // Glowing outer aura
+                ctx.beginPath();
+                ctx.arc(px, py, isHovered ? 24 : 14, 0, Math.PI * 2);
+                ctx.fillStyle = isHovered 
+                    ? `rgba(0, 240, 255, 0.15)` 
+                    : `rgba(0, 240, 255, 0.03)`;
+                ctx.fill();
+
+                // Core outline
+                ctx.beginPath();
+                ctx.arc(px, py, 9, 0, Math.PI * 2);
+                ctx.strokeStyle = node.color ? node.color : primaryGlow;
+                ctx.lineWidth = 2.5;
+                ctx.fillStyle = isLight ? "#ffffff" : "#060a14";
+                ctx.fill();
+                ctx.stroke();
+
+                // Small pulsing dot inside core
+                const pulseSize = 3 + Math.abs(Math.sin(Date.now() / 300) * 1.5);
+                ctx.beginPath();
+                ctx.arc(px, py, pulseSize, 0, Math.PI * 2);
+                ctx.fillStyle = node.color ? node.color : primaryGlow;
+                ctx.fill();
+
+                // Text Labels above node
+                ctx.font = isHovered ? "bold 10px Orbitron" : "10px Orbitron";
+                ctx.fillStyle = isLight ? "#1c1917" : "#e2e8f0";
+                ctx.textAlign = "center";
+                ctx.fillText(node.name.toUpperCase(), px, py - 20);
+            });
+
+            requestAnimationFrame(animateNodes);
+        }
+
+        // Start node animation loop
+        setTimeout(animateNodes, 100);
+
+        // 4. Live System Monitor Widget Fluctuations
         const latencyVal = document.getElementById("latency-val");
         const cpuVal = document.getElementById("cpu-val");
 
@@ -1425,18 +1643,6 @@
             const rawCpu = Math.floor(Math.random() * 8 + 8);
             cpuVal.textContent = `${rawCpu}%`;
         }, 1500);
-
-        // 5. Mouse-tracking highlight glow for cards
-        const cards = document.querySelectorAll('.service-card, .product-card, .case-card');
-        cards.forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                card.style.setProperty('--mouse-x', `${x}px`);
-                card.style.setProperty('--mouse-y', `${y}px`);
-            });
-        });
     </script>
 
 </body>
