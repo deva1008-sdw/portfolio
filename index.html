@@ -97,6 +97,59 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
+        /* Full Screen Trishul Preloader Screen */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #05080c; /* Matches dark theme background on first load */
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+        }
+
+        #preloader.fade-out {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .preloader-content {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .trishul-logo {
+            margin-bottom: 24px;
+            filter: drop-shadow(0 0 15px var(--cyan));
+        }
+
+        /* Line Drawing Animation */
+        .trishul-svg line, .trishul-svg path {
+            stroke-dasharray: 600;
+            stroke-dashoffset: 600;
+            animation: drawTrishul 2.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+        }
+
+        @keyframes drawTrishul {
+            to { stroke-dashoffset: 0; }
+        }
+
+        .preloader-title {
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            color: var(--cyan);
+            letter-spacing: 0.18em;
+            font-weight: 800;
+            margin-top: 12px;
+            text-transform: uppercase;
+        }
+
         /* Brand Watermark Overlay */
         .watermark-container {
             position: fixed;
@@ -1436,14 +1489,34 @@
         </div>
     </footer>
 
-    <!-- Official Contra Hire SDK Script -->
-    <script async src="https://contra.com/static/embed/sdk.js" charset="utf-8"></script>
+    <!-- Official preloader layout overlay -->
+    <div id="preloader">
+        <div class="preloader-content">
+            <div class="trishul-logo">
+                <svg class="trishul-svg" width="120" height="180" viewBox="0 0 100 150" fill="none" stroke="var(--cyan)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="50" y1="140" x2="50" y2="40" />
+                    <path d="M46 40 L50 22 L54 40 Z" fill="var(--cyan)" />
+                    <path d="M50 85 C25 85 25 60 25 45" />
+                    <path d="M21 45 L25 32 L29 45 Z" fill="var(--cyan)" />
+                    <path d="M50 85 C75 85 75 60 75 45" />
+                    <path d="M71 45 L75 32 L79 45 Z" fill="var(--cyan)" />
+                    <line x1="44" y1="85" x2="56" y2="85" />
+                    <line x1="42" y1="95" x2="58" y2="95" />
+                    <path d="M43 105 L57 117 L43 117 L57 105 Z" stroke-width="1.8" fill="none" />
+                </svg>
+            </div>
+            <div class="preloader-title" id="preloader-text">ESTABLISHING SECURE K3 SESSION...</div>
+            <button id="enter-btn" class="btn btn-accent" style="opacity: 0; transform: translateY(10px); transition: all 0.5s; pointer-events: none; margin-top: 24px;">ENTER CONSOLE</button>
+        </div>
+    </div>
 
-    <!-- Interactive Scripts: Particle Canvas, Text Scrambler, Live Widget Ticks, Theme Switch -->
+    <!-- Interactive Scripts: Particle Canvas, Text Scrambler, Live Widget Ticks, Theme Switch, Preloader Theme and Action -->
     <script>
         // 1. Theme Toggle System with Contra Embed Integration
         const themeToggle = document.getElementById("theme-toggle");
         const contraButtons = document.querySelectorAll(".contra-hire-me-button");
+        const preloader = document.getElementById("preloader");
+        const trishulSvg = document.querySelector(".trishul-svg");
         
         function updateContraTheme(themeMode) {
             contraButtons.forEach(btn => {
@@ -1459,6 +1532,15 @@
             document.body.classList.add("light-theme");
             themeToggle.textContent = "☀️";
             updateContraTheme("light");
+            // Set light colors on preloader dynamically
+            if (preloader) {
+                preloader.style.background = "#f3efe9";
+                trishulSvg.setAttribute("stroke", "#0284c7");
+                document.querySelectorAll(".trishul-svg path").forEach(p => {
+                    p.setAttribute("fill", "#0284c7");
+                });
+                document.getElementById("preloader-text").style.color = "#0284c7";
+            }
         } else {
             themeToggle.textContent = "🌙";
             updateContraTheme("dark");
@@ -1478,7 +1560,21 @@
             localStorage.setItem("theme", theme);
         });
 
-        // 2. 3D Parallax Movement
+        // 2. Preloader access console fade-in trigger
+        setTimeout(() => {
+            const enterBtn = document.getElementById("enter-btn");
+            if (enterBtn) {
+                enterBtn.style.opacity = "1";
+                enterBtn.style.transform = "translateY(0)";
+                enterBtn.style.pointerEvents = "all";
+            }
+        }, 2200);
+
+        document.getElementById("enter-btn").addEventListener("click", () => {
+            preloader.classList.add("fade-out");
+        });
+
+        // 3. 3D Parallax Movement
         const parallaxGrid = document.getElementById("parallax-grid");
         window.addEventListener("mousemove", (e) => {
             const x = (e.clientX - window.innerWidth / 2) / 35;
@@ -1486,7 +1582,7 @@
             parallaxGrid.style.transform = `translate(${x}px, ${y}px)`;
         });
 
-        // 3. Cyber Terminal Interactive Shell Engine
+        // 4. Cyber Terminal Interactive Shell Engine
         const terminalScreen = document.getElementById("terminal-screen");
         const terminalInput = document.getElementById("terminal-input");
         const terminalWindow = document.getElementById("terminal-window");
@@ -1580,7 +1676,7 @@
             }
         }
 
-        // 4. Advanced Sweep Background Radar Canvas
+        // 5. Advanced Sweep Background Radar Canvas
         const radarCanvas = document.getElementById('radar-canvas');
         const radarCtx = radarCanvas.getContext('2d');
 
@@ -1682,7 +1778,7 @@
         }
         animateRadar();
 
-        // 5. Interactive HUD Node Canvas Map
+        // 6. Interactive HUD Node Canvas Map
         const nodeCanvas = document.getElementById("node-canvas");
         const nodeCtx = nodeCanvas.getContext("2d");
         const hudDetails = document.getElementById("hud-details");
@@ -1847,7 +1943,7 @@
         // Start node animation loop
         setTimeout(animateNodes, 100);
 
-        // 6. Live System Monitor Widget Fluctuations
+        // 7. Live System Monitor Widget Fluctuations
         const latencyVal = document.getElementById("latency-val");
         const cpuVal = document.getElementById("cpu-val");
 
