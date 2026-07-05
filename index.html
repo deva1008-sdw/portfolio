@@ -2015,6 +2015,30 @@
             ribbonMesh2.castShadow = true;
             trishulGroup.add(ribbonMesh2);
 
+            // String of Rudraksha beads hanging from Damru base
+            const beadsCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.05, -1.1, -0.05),
+                new THREE.Vector3(-0.2, -1.6, 0.08),
+                new THREE.Vector3(-0.12, -2.2, 0.05),
+                new THREE.Vector3(-0.02, -2.7, 0.1)
+            ]);
+            const beadGeo = new THREE.SphereGeometry(0.045, 8, 8);
+            const beadMat = new THREE.MeshStandardMaterial({
+                color: 0x582f0e, // wood/rudraksha brown
+                roughness: 0.9,
+                bumpMap: textures.bumpMap, // rough texture
+                bumpScale: 0.025
+            });
+
+            const beadPoints = beadsCurve.getPoints(12);
+            beadPoints.forEach(pt => {
+                const bead = new THREE.Mesh(beadGeo, beadMat);
+                bead.position.copy(pt);
+                bead.castShadow = true;
+                trishulGroup.add(bead);
+            });
+
+
             // Set drop starting position
             trishulGroup.position.set(0, 18, 0);
             trishulGroup.rotation.set(0.12, 0, 0.18);
