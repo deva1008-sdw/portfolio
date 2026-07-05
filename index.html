@@ -1658,6 +1658,68 @@
             };
         }
 
+        // Generate Gold hammered and swirly engraving textures
+        function createGoldTextures(rockBumpTex) {
+            const canvas = document.createElement("canvas");
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext("2d");
+            
+            // Rich golden base
+            ctx.fillStyle = "#ffd700";
+            ctx.fillRect(0, 0, 256, 256);
+            
+            // Faint golden engraving lines
+            ctx.strokeStyle = "#b8860b";
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < 12; i++) {
+                ctx.beginPath();
+                ctx.arc(Math.random()*256, Math.random()*256, Math.random()*50 + 20, 0.1, Math.PI * 1.4);
+                ctx.stroke();
+            }
+            
+            // Bump map canvas
+            const bump = document.createElement("canvas");
+            bump.width = 256;
+            bump.height = 256;
+            const bumpCtx = bump.getContext("2d");
+            bumpCtx.fillStyle = "#808080";
+            bumpCtx.fillRect(0, 0, 256, 256);
+            
+            bumpCtx.strokeStyle = "#403000";
+            bumpCtx.lineWidth = 2.5;
+            for (let i = 0; i < 12; i++) {
+                bumpCtx.beginPath();
+                bumpCtx.arc(Math.random()*256, Math.random()*256, Math.random()*50 + 20, 0.1, Math.PI * 1.4);
+                bumpCtx.stroke();
+            }
+            // Add hammered noise
+            for (let i = 0; i < 1200; i++) {
+                const val = 128 + Math.floor((Math.random() - 0.5) * 40);
+                bumpCtx.fillStyle = `rgb(${val},${val},${val})`;
+                bumpCtx.fillRect(Math.random() * 256, Math.random() * 256, 3, 3);
+            }
+            
+            return {
+                map: new THREE.CanvasTexture(canvas),
+                bumpMap: new THREE.CanvasTexture(bump)
+            };
+        }
+
+        // Generate Radial Gradient texture for Volumetric sky clouds
+        function createCloudTexture() {
+            const canvas = document.createElement("canvas");
+            canvas.width = 256;
+            canvas.height = 256;
+            const ctx = canvas.getContext("2d");
+            const grad = ctx.createRadialGradient(128, 128, 10, 128, 128, 120);
+            grad.addColorStop(0, "rgba(255, 255, 255, 0.14)");
+            grad.addColorStop(1, "rgba(255, 255, 255, 0)");
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 256, 256);
+            return new THREE.CanvasTexture(canvas);
+        }
+
         function init3DLoader() {
             const container = document.getElementById("three-container");
             if (!container) return;
@@ -1667,7 +1729,7 @@
             scene.background = new THREE.Color(cinematicBgColor);
             scene.fog = new THREE.FogExp2(cinematicBgColor, 0.045);
 
-            // Camera setup - HEROIC LOW ANGLE lookup. Positions ground at 1/4 of screen.
+            // Camera setup - HEROIC LOW ANGLE lookup. Ground horizon sits at 1/4th screen height.
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
             camera.position.set(0, -1.2, 10);
             camera.lookAt(0, 0.4, 0);
@@ -1676,7 +1738,6 @@
             renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
             renderer.setSize(container.clientWidth, container.clientHeight);
             renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-            // Enable soft shadows
             renderer.shadowMap.enabled = true;
             renderer.shadowMap.type = THREE.PCFSoftShadowMap;
             container.appendChild(renderer.domElement);
@@ -1688,26 +1749,22 @@
                 renderer.setSize(container.clientWidth, container.clientHeight);
             });
 
-            // Lighting Setup - Standard photorealistic three-point setup
+            // Lighting Setup - Cinematic Studio Shadows
             const ambient = new THREE.AmbientLight(0xffffff, 0.35);
             scene.add(ambient);
 
-            // Warm key directional light (casts shadow map)
             const keyLight = new THREE.DirectionalLight(0xffeebb, 0.85);
             keyLight.position.set(5, 12, 4);
             scene.add(keyLight);
 
-            // Fill light
             const fillLight = new THREE.DirectionalLight(0x88bbff, 0.35);
             fillLight.position.set(-5, 4, -4);
             scene.add(fillLight);
 
-            // Rim light behind Trishul (gold outline glow)
             const rimLight = new THREE.DirectionalLight(0xffffff, 0.95);
             rimLight.position.set(0, 3, -8);
             scene.add(rimLight);
 
-            // Spotlight target casting soft shadows
             const spotLight = new THREE.SpotLight(cinematicThemeColor, 2.0, 30, Math.PI / 4, 0.5, 1);
             spotLight.position.set(0, 15, 0);
             spotLight.target.position.set(0, -3, 0);
@@ -1718,8 +1775,9 @@
             scene.add(spotLight);
             scene.add(spotLight.target);
 
-            // Compile dynamic slate/rock textures
+            // Compile dynamic materials
             const textures = createRockTexture();
+            const goldTex = createGoldTextures();
 
             // 3D Rugged Rocky Ground Terrain (Displaced PlaneGeometry)
             const groundGeo = new THREE.PlaneGeometry(40, 40, 60, 60);
@@ -1727,7 +1785,6 @@
             for (let i = 0; i < groundPos.count; i++) {
                 const x = groundPos.getX(i);
                 const y = groundPos.getY(i);
-                // Create rocky height variations
                 const zOffset = Math.sin(x * 0.2) * Math.cos(y * 0.2) * 0.45 + (Math.random() - 0.5) * 0.14;
                 groundPos.setZ(i, zOffset);
             }
@@ -1757,7 +1814,6 @@
             });
             for (let i = 0; i < 35; i++) {
                 const rGeo = new THREE.DodecahedronGeometry(Math.random() * 0.25 + 0.15, 1);
-                // Displace stone vertices to look rough/volumetric
                 const rPos = rGeo.attributes.position;
                 for (let k = 0; k < rPos.count; k++) {
                     rPos.setX(k, rPos.getX(k) + (Math.random() - 0.5) * 0.06);
@@ -1778,49 +1834,57 @@
             }
             scene.add(rocksGroup);
 
-            // Background Misty Mountains
-            const mountainGroup = new THREE.Group();
-            const mtGeo1 = new THREE.ConeGeometry(8, 12, 5, 5);
-            const mtGeo2 = new THREE.ConeGeometry(10, 14, 5, 5);
-            const mtGeo3 = new THREE.ConeGeometry(6, 8, 5, 5);
+            // High-Fidelity 3D Heightmap Mountain Range (Faceted flat-shaded peaks)
+            const mtGeo = new THREE.PlaneGeometry(60, 30, 120, 80);
+            const mtPos = mtGeo.attributes.position;
+            for (let i = 0; i < mtPos.count; i++) {
+                const x = mtPos.getX(i);
+                const y = mtPos.getY(i);
+                let z = Math.sin(x * 0.15) * Math.cos(y * 0.15) * 4.0;
+                z += Math.sin(x * 0.5) * Math.cos(y * 0.5) * 1.2;
+                z += Math.sin(x * 1.5) * Math.cos(y * 1.5) * 0.3;
+                z += (Math.random() - 0.5) * 0.08;
+                
+                const edgeFade = (1 - Math.abs(x) / 30) * Math.min(1, (y + 15) / 10);
+                mtPos.setZ(i, z * Math.max(0, edgeFade));
+            }
+            mtGeo.computeVertexNormals();
+
             const mtMat = new THREE.MeshStandardMaterial({
                 map: textures.map,
                 bumpMap: textures.bumpMap,
                 bumpScale: 0.15,
                 roughness: 0.95,
-                metalness: 0.05
+                metalness: 0.05,
+                flatShading: true // sharp rock ridges
             });
+            const mountainRange = new THREE.Mesh(mtGeo, mtMat);
+            mountainRange.position.set(0, -2.5, -14);
+            mountainRange.rotation.x = -Math.PI / 2.5;
+            mountainRange.receiveShadow = true;
+            scene.add(mountainRange);
 
-            [mtGeo1, mtGeo2, mtGeo3].forEach(geom => {
-                const pos = geom.attributes.position;
-                for (let i = 0; i < pos.count; i++) {
-                    const y = pos.getY(i);
-                    if (y > -5) {
-                        pos.setX(i, pos.getX(i) + (Math.random() - 0.5) * 0.7);
-                        pos.setZ(i, pos.getZ(i) + (Math.random() - 0.5) * 0.7);
-                    }
-                }
-                geom.computeVertexNormals();
+            // Volumetric drifting sky clouds
+            const cloudTex = createCloudTexture();
+            const cloudGeo = new THREE.PlaneGeometry(16, 12);
+            const cloudMat = new THREE.MeshBasicMaterial({
+                map: cloudTex,
+                transparent: true,
+                opacity: 0.75,
+                depthWrite: false
             });
+            window.cloudsList = [];
+            for (let i = 0; i < 5; i++) {
+                const cloud = new THREE.Mesh(cloudGeo, cloudMat);
+                cloud.position.set((Math.random() - 0.5) * 14, Math.random() * 4 + 1, -12);
+                scene.add(cloud);
+                window.cloudsList.push({
+                    mesh: cloud,
+                    speed: Math.random() * 0.004 + 0.002
+                });
+            }
 
-            const mt1 = new THREE.Mesh(mtGeo1, mtMat);
-            mt1.position.set(-8, 1, -14);
-            mt1.rotation.y = Math.PI / 4;
-            mountainGroup.add(mt1);
-
-            const mt2 = new THREE.Mesh(mtGeo2, mtMat);
-            mt2.position.set(6, 2, -16);
-            mt2.rotation.y = 0.2;
-            mountainGroup.add(mt2);
-
-            const mt3 = new THREE.Mesh(mtGeo3, mtMat);
-            mt3.position.set(-1, -1, -11);
-            mt3.rotation.y = 0.8;
-            mountainGroup.add(mt3);
-
-            scene.add(mountainGroup);
-
-            // Meditating Shiva Silhouette
+            // Meditating Lord Shiva Silhouette in clouds
             const shivaShape = new THREE.Shape();
             shivaShape.moveTo(0, 3.5);
             shivaShape.bezierCurveTo(0.2, 3.5, 0.35, 3.0, 0.2, 2.7);
@@ -1843,15 +1907,15 @@
             const shivaMat = new THREE.MeshBasicMaterial({
                 color: 0x070c14,
                 transparent: true,
-                opacity: 0.14,
+                opacity: 0.12,
                 depthWrite: false
             });
             const shivaMesh = new THREE.Mesh(shivaGeo, shivaMat);
-            shivaMesh.position.set(0, 2.8, -18);
+            shivaMesh.position.set(0, 2.8, -17.9);
             shivaMesh.scale.set(2.4, 2.4, 1);
             scene.add(shivaMesh);
 
-            // Floating Storm Debris Rocks
+            // Floating storm debris rocks
             const fRocksGroup = new THREE.Group();
             window.debrisRocks = [];
             for (let i = 0; i < 20; i++) {
@@ -1907,20 +1971,21 @@
             omMesh.position.set(0, -2.97, 0);
             scene.add(omMesh);
 
-            // Rebuild Gold Trishul as Volumetric 3D Model (Hammered Gold finish)
+            // Rebuild Gold Trishul as Volumetric 3D Model (Hand-Engraved Gold finish)
             const goldMetalMat = new THREE.MeshStandardMaterial({
-                color: 0xd4af37, // Royal Gold
+                map: goldTex.map,
+                bumpMap: goldTex.bumpMap, // Custom swirls bump engravings
+                bumpScale: 0.02,
+                color: 0xd4af37, 
                 metalness: 0.98,
                 roughness: 0.14,
-                bumpMap: textures.bumpMap, // Hammered gold relief
-                bumpScale: 0.018,
                 emissive: 0x221a05,
                 emissiveIntensity: 0.25
             });
 
             trishulGroup = new THREE.Group();
 
-            // Center Spear tip (volumetric cylinder + cone)
+            // Center Spear tip (volumetric cylinder + faceted cone)
             const lowerBlade = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.08, 1.6, 16), goldMetalMat);
             lowerBlade.position.y = 1.2;
             lowerBlade.castShadow = true;
@@ -1932,20 +1997,19 @@
             upperBlade.castShadow = true;
             trishulGroup.add(upperBlade);
 
-            // Left curved prong (TubeGeometry)
+            // Left curved prong (TubeGeometry) - parallel sweeps pointing up
             const leftProngPath = new THREE.CatmullRomCurve3([
                 new THREE.Vector3(0, 0.4, 0),
                 new THREE.Vector3(-0.4, 0.6, 0),
                 new THREE.Vector3(-0.75, 1.1, 0),
                 new THREE.Vector3(-0.8, 1.8, 0),
                 new THREE.Vector3(-0.75, 2.5, 0),
-                new THREE.Vector3(-0.7, 3.1, 0) // curves up, parallel to center tip
+                new THREE.Vector3(-0.7, 3.1, 0)
             ]);
             const leftProng = new THREE.Mesh(new THREE.TubeGeometry(leftProngPath, 32, 0.09, 8, false), goldMetalMat);
             leftProng.castShadow = true;
             trishulGroup.add(leftProng);
 
-            // Left prong tip sphere ornament
             const leftSphere = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), goldMetalMat);
             leftSphere.position.set(-0.7, 3.1, 0);
             leftSphere.castShadow = true;
@@ -1964,22 +2028,39 @@
             rightProng.castShadow = true;
             trishulGroup.add(rightProng);
 
-            // Right prong tip sphere ornament
             const rightSphere = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), goldMetalMat);
             rightSphere.position.set(0.7, 3.1, 0);
             rightSphere.castShadow = true;
             trishulGroup.add(rightSphere);
 
-            // Double neck collars
-            const ring1 = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 16), goldMetalMat);
-            ring1.position.y = 0.32;
-            ring1.castShadow = true;
-            trishulGroup.add(ring1);
+            // Rebuild Neck Collar using LatheGeometry (ornate curves)
+            const lathePoints = [];
+            lathePoints.push(new THREE.Vector2(0.05, 0.0));
+            lathePoints.push(new THREE.Vector2(0.18, 0.15));
+            lathePoints.push(new THREE.Vector2(0.24, 0.35));
+            lathePoints.push(new THREE.Vector2(0.14, 0.55));
+            lathePoints.push(new THREE.Vector2(0.22, 0.65));
+            lathePoints.push(new THREE.Vector2(0.08, 0.75));
+            
+            const collarGeo = new THREE.LatheGeometry(lathePoints, 32);
+            const collarMesh = new THREE.Mesh(collarGeo, goldMetalMat);
+            collarMesh.position.y = 0.35;
+            collarMesh.castShadow = true;
+            trishulGroup.add(collarMesh);
 
-            const ring2 = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.18, 0.08, 16), goldMetalMat);
-            ring2.position.y = 0.2;
-            ring2.castShadow = true;
-            trishulGroup.add(ring2);
+            // Ornamental scrolls at neck base
+            const scrollGeo1 = new THREE.TorusGeometry(0.3, 0.06, 8, 24, Math.PI * 1.2);
+            const scroll1 = new THREE.Mesh(scrollGeo1, goldMetalMat);
+            scroll1.position.set(-0.25, 0.45, 0);
+            scroll1.rotation.z = Math.PI / 4;
+            scroll1.castShadow = true;
+            trishulGroup.add(scroll1);
+
+            const scroll2 = new THREE.Mesh(scrollGeo1, goldMetalMat);
+            scroll2.position.set(0.25, 0.45, 0);
+            scroll2.rotation.z = -Math.PI / 4 - Math.PI * 0.2;
+            scroll2.castShadow = true;
+            trishulGroup.add(scroll2);
 
             // Volumetric shaft
             const shaftMesh = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 3.8, 16), goldMetalMat);
@@ -1987,7 +2068,7 @@
             shaftMesh.castShadow = true;
             trishulGroup.add(shaftMesh);
 
-            // Volumetric Damru Cylinder
+            // Volumetric Damru Cylinder with crossed ropes wrap
             const damruGroup = new THREE.Group();
             const dCone1 = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.32, 16), goldMetalMat);
             dCone1.position.y = 0.14;
@@ -1999,10 +2080,25 @@
             damruGroup.add(dCone1);
             damruGroup.add(dCone2);
 
-            // Cord/Rope wrapped around Damru center
+            // 8 crossed cords wrapping Damru center diagonally
+            const ropeMat = new THREE.MeshStandardMaterial({ color: 0xddcba0, roughness: 0.95 });
+            for (let i = 0; i < 8; i++) {
+                const angle = (i / 8) * Math.PI * 2;
+                const nextAngle = ((i + 1.5) / 8) * Math.PI * 2;
+                
+                const cordCurve = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(Math.cos(angle)*0.2, 0.14, Math.sin(angle)*0.2),
+                    new THREE.Vector3(Math.cos((angle+nextAngle)/2)*0.11, 0, Math.sin((angle+nextAngle)/2)*0.11),
+                    new THREE.Vector3(Math.cos(nextAngle)*0.2, -0.14, Math.sin(nextAngle)*0.2)
+                ]);
+                const cord = new THREE.Mesh(new THREE.TubeGeometry(cordCurve, 8, 0.015, 6, false), ropeMat);
+                cord.castShadow = true;
+                damruGroup.add(cord);
+            }
+
+            // Central belt loop
             const cordGeo = new THREE.TorusGeometry(0.11, 0.025, 8, 32);
-            const cordMat = new THREE.MeshStandardMaterial({ color: 0x92400e, roughness: 0.95 }); // brown rope
-            const cord = new THREE.Mesh(cordGeo, cordMat);
+            const cord = new THREE.Mesh(cordGeo, ropeMat);
             cord.rotation.x = Math.PI / 2;
             damruGroup.add(cord);
 
@@ -2041,9 +2137,9 @@
             ]);
             const beadGeo = new THREE.SphereGeometry(0.045, 8, 8);
             const beadMat = new THREE.MeshStandardMaterial({
-                color: 0x582f0e, // wood/rudraksha brown
+                color: 0x582f0e, 
                 roughness: 0.9,
-                bumpMap: textures.bumpMap, // rough texture
+                bumpMap: textures.bumpMap, 
                 bumpScale: 0.025
             });
 
@@ -2054,7 +2150,6 @@
                 bead.castShadow = true;
                 trishulGroup.add(bead);
             });
-
 
             // Set drop starting position
             trishulGroup.position.set(0, 18, 0);
@@ -2280,7 +2375,15 @@
                 });
             }
 
-            // 7. Background Lightning trigger loop
+            // 7. Volumetric clouds drift update
+            if (window.cloudsList) {
+                window.cloudsList.forEach(c => {
+                    c.mesh.position.x += c.speed;
+                    if (c.mesh.position.x > 9) c.mesh.position.x = -9;
+                });
+            }
+
+            // 8. Background Lightning trigger loop
             if (landingTriggered && Math.random() < 0.0035) {
                 createLightning();
             }
