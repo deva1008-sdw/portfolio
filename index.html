@@ -1573,6 +1573,8 @@
         let shockwaveRing;
         let shockwaveScale = 0.01;
         let shakeIntensity = 0;
+        let omMesh;
+        let lightningLines = [];
 
         function init3DLoader() {
             const container = document.getElementById("three-container");
@@ -1581,6 +1583,9 @@
             // Scene setup
             scene = new THREE.Scene();
             scene.background = new THREE.Color(activeBgColor);
+            
+            // Volumetric mist fog matching landscape
+            scene.fog = new THREE.FogExp2(activeBgColor, 0.045);
 
             // Camera setup
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
@@ -1601,31 +1606,113 @@
                 renderer.setSize(container.clientWidth, container.clientHeight);
             });
 
-            // Lighting Setup - Three-Point Volumetric Lights
-            const ambient = new THREE.AmbientLight(0xffffff, currentTheme === "light" ? 0.65 : 0.35);
+            // Lighting Setup - Cinematic 3-Point Setup
+            const ambient = new THREE.AmbientLight(0xffffff, currentTheme === "light" ? 0.65 : 0.3);
             scene.add(ambient);
 
-            // Warm Key Light (creates golden reflections)
+            // Warm Key Light (Golden specular highlights)
             const keyLight = new THREE.DirectionalLight(0xffeebb, 2.5);
             keyLight.position.set(6, 12, 6);
             scene.add(keyLight);
 
-            // Cool Fill Light (balances shadows)
+            // Cool Fill Light (balances shadow regions)
             const fillLight = new THREE.DirectionalLight(0x88bbff, 1.2);
             fillLight.position.set(-6, 6, -6);
             scene.add(fillLight);
 
-            // Rim Light (shines from behind for a glowing silhouette)
+            // Rim Light (shining from behind for neon edges)
             const rimLight = new THREE.DirectionalLight(0xffffff, 2.0);
             rimLight.position.set(0, 4, -10);
             scene.add(rimLight);
 
-            // Volumetric spotlight to reveal Trishul landing spot
+            // Target spot spotlight
             const spotLight = new THREE.SpotLight(activeThemeColor, 3, 25, Math.PI / 4, 0.5, 1);
             spotLight.position.set(0, 15, 0);
             spotLight.target.position.set(0, -3, 0);
             scene.add(spotLight);
             scene.add(spotLight.target);
+
+            // Jagged misty mountains (low-poly background landscape)
+            const mountainGroup = new THREE.Group();
+            const mtGeo = new THREE.ConeGeometry(8, 12, 4);
+            const mtMat = new THREE.MeshStandardMaterial({
+                color: currentTheme === "light" ? 0xa1a1aa : 0x111c28,
+                roughness: 0.95,
+                metalness: 0.05
+            });
+
+            const mt1 = new THREE.Mesh(mtGeo, mtMat);
+            mt1.position.set(-8, 1, -14);
+            mt1.rotation.y = Math.PI / 4;
+            mountainGroup.add(mt1);
+
+            const mt2 = new THREE.Mesh(new THREE.ConeGeometry(10, 14, 4), mtMat);
+            mt2.position.set(6, 2, -16);
+            mt2.rotation.y = 0.2;
+            mountainGroup.add(mt2);
+
+            const mt3 = new THREE.Mesh(new THREE.ConeGeometry(6, 8, 4), mtMat);
+            mt3.position.set(-1, -1, -11);
+            mt3.rotation.y = 0.8;
+            mountainGroup.add(mt3);
+
+            scene.add(mountainGroup);
+
+            // Meditating Lord Shiva Silhouette (placed in far clouds)
+            const shivaShape = new THREE.Shape();
+            shivaShape.moveTo(0, 3.5);
+            shivaShape.bezierCurveTo(0.2, 3.5, 0.35, 3.0, 0.2, 2.7);
+            shivaShape.bezierCurveTo(0.5, 2.6, 0.45, 2.2, 0.15, 2.1);
+            shivaShape.lineTo(0.18, 1.8);
+            shivaShape.bezierCurveTo(0.9, 1.7, 1.3, 1.2, 1.3, 0.6);
+            shivaShape.lineTo(1.15, 0.2);
+            shivaShape.lineTo(1.4, -0.5);
+            shivaShape.bezierCurveTo(1.6, -1.0, 1.3, -1.5, 0, -1.5);
+            shivaShape.bezierCurveTo(-1.3, -1.5, -1.6, -1.0, -1.4, -0.5);
+            shivaShape.lineTo(-1.15, 0.2);
+            shivaShape.lineTo(-1.3, 0.6);
+            shivaShape.bezierCurveTo(-1.3, 1.2, -0.9, 1.7, -0.18, 1.8);
+            shivaShape.lineTo(-0.15, 2.1);
+            shivaShape.bezierCurveTo(-0.45, 2.2, -0.5, 2.6, -0.2, 2.7);
+            shivaShape.bezierCurveTo(-0.35, 3.0, -0.2, 3.5, 0, 3.5);
+            shivaShape.closePath();
+
+            const shivaGeo = new THREE.ShapeGeometry(shivaShape);
+            const shivaMat = new THREE.MeshBasicMaterial({
+                color: currentTheme === "light" ? 0x64748b : 0x070c14,
+                transparent: true,
+                opacity: 0.16,
+                depthWrite: false
+            });
+            const shivaMesh = new THREE.Mesh(shivaGeo, shivaMat);
+            shivaMesh.position.set(0, 2.5, -18);
+            shivaMesh.scale.set(2.2, 2.2, 1);
+            scene.add(shivaMesh);
+
+            // Floating storm debris rocks (Image 3 style)
+            const rocksGroup = new THREE.Group();
+            const rockGeo = new THREE.DodecahedronGeometry(0.3, 1);
+            const rockMat = new THREE.MeshStandardMaterial({
+                color: currentTheme === "light" ? 0x78716c : 0x1f2937,
+                roughness: 0.9,
+                metalness: 0.1
+            });
+            window.debrisRocks = [];
+            for (let i = 0; i < 22; i++) {
+                const rock = new THREE.Mesh(rockGeo, rockMat);
+                const angle = Math.random() * Math.PI * 2;
+                const r = Math.random() * 8 + 4;
+                const y = Math.random() * 8 - 1;
+                rock.position.set(Math.cos(angle) * r, y, Math.sin(angle) * r);
+                rock.scale.setScalar(Math.random() * 0.7 + 0.35);
+                rocksGroup.add(rock);
+                window.debrisRocks.push({
+                    mesh: rock,
+                    seed: Math.random() * 100,
+                    speed: Math.random() * 0.02 + 0.01
+                });
+            }
+            scene.add(rocksGroup);
 
             // Glowing Tactical Grid Ground
             gridHelper = new THREE.GridHelper(30, 30, activeThemeColor, activeThemeColor);
@@ -1634,33 +1721,54 @@
             gridHelper.material.transparent = true;
             scene.add(gridHelper);
 
-            // Realistic Extrusion of a Traditional Sacred Trishul Head Shape
+            // Dynamic Canvas-drawn glowing OM Symbol (Image 2 style)
+            const canvasOM = document.createElement("canvas");
+            canvasOM.width = 512;
+            canvasOM.height = 512;
+            const ctxOM = canvasOM.getContext("2d");
+            ctxOM.clearRect(0, 0, 512, 512);
+            ctxOM.font = "bold 260px sans-serif";
+            ctxOM.textAlign = "center";
+            ctxOM.textBaseline = "middle";
+            ctxOM.fillStyle = activeThemeColor;
+            ctxOM.shadowColor = activeThemeColor;
+            ctxOM.shadowBlur = 45;
+            ctxOM.fillText("ॐ", 256, 256);
+
+            const omTexture = new THREE.CanvasTexture(canvasOM);
+            const omGeo = new THREE.PlaneGeometry(8, 8);
+            const omMat = new THREE.MeshBasicMaterial({
+                map: omTexture,
+                transparent: true,
+                opacity: 0, // Hidden until collision impact
+                depthWrite: false
+            });
+            omMesh = new THREE.Mesh(omGeo, omMat);
+            omMesh.rotation.x = -Math.PI / 2;
+            omMesh.position.set(0, -2.98, 0);
+            scene.add(omMesh);
+
+            // Traditional Gold Trishul Head Extrusion Shape
             const trishulShape = new THREE.Shape();
-            
-            // Starting neck base
             trishulShape.moveTo(-0.15, 0);
 
-            // Left Outer Crescent Prong
-            trishulShape.bezierCurveTo(-0.7, 0, -1.35, 0.5, -1.35, 1.8);
-            // Left prong hook/tip pointing slightly inward
-            trishulShape.bezierCurveTo(-1.35, 2.3, -1.15, 2.5, -1.05, 2.5);
-            trishulShape.lineTo(-1.12, 2.4);
-            // Left inner blade sweep
-            trishulShape.bezierCurveTo(-0.95, 2.0, -0.95, 1.0, -0.18, 0.7);
+            // Left crescent prong
+            trishulShape.bezierCurveTo(-0.7, 0, -1.45, 0.6, -1.45, 2.0);
+            trishulShape.bezierCurveTo(-1.45, 2.5, -1.2, 2.7, -1.1, 2.7);
+            trishulShape.lineTo(-1.18, 2.5);
+            trishulShape.bezierCurveTo(-1.0, 2.0, -1.0, 1.0, -0.2, 0.7);
             
-            // Central Leaf Spear Blade
-            trishulShape.lineTo(-0.18, 1.0);
-            trishulShape.bezierCurveTo(-0.35, 1.8, -0.35, 2.6, 0, 3.2); // sharp center peak
-            trishulShape.bezierCurveTo(0.35, 2.6, 0.35, 1.8, 0.18, 1.0);
+            // Center spear tip
+            trishulShape.lineTo(-0.2, 1.0);
+            trishulShape.bezierCurveTo(-0.38, 1.9, -0.38, 2.7, 0, 3.3);
+            trishulShape.bezierCurveTo(0.38, 2.7, 0.38, 1.9, 0.2, 1.0);
             
-            // Right inner blade sweep
-            trishulShape.lineTo(0.18, 0.7);
-            trishulShape.bezierCurveTo(0.95, 1.0, 0.95, 2.0, 1.12, 2.4);
-            trishulShape.lineTo(1.05, 2.5);
-            // Right prong hook/tip
-            trishulShape.bezierCurveTo(1.15, 2.5, 1.35, 2.3, 1.35, 1.8);
-            // Right Outer Crescent Prong
-            trishulShape.bezierCurveTo(1.35, 0.5, 0.7, 0, 0.15, 0);
+            // Right crescent prong
+            trishulShape.lineTo(0.2, 0.7);
+            trishulShape.bezierCurveTo(1.0, 1.0, 1.0, 2.0, 1.18, 2.5);
+            trishulShape.lineTo(1.1, 2.7);
+            trishulShape.bezierCurveTo(1.2, 2.7, 1.45, 2.5, 1.45, 2.0);
+            trishulShape.bezierCurveTo(1.45, 0.6, 0.7, 0, 0.15, 0);
 
             trishulShape.closePath();
 
@@ -1673,12 +1781,11 @@
                 bevelThickness: 0.04
             };
 
-            // Traditional Metallic Royal Gold Material
             const goldMetalMat = new THREE.MeshStandardMaterial({
                 color: 0xd4af37, // Royal Gold
                 metalness: 0.95,
                 roughness: 0.18,
-                emissive: 0x47370a, // Deep warm amber inner glow
+                emissive: 0x47370a,
                 emissiveIntensity: 0.35
             });
 
@@ -1691,7 +1798,7 @@
             headMesh.position.y = 1.6;
             trishulGroup.add(headMesh);
 
-            // Horizontal collars / rings wrapping the neck (highly authentic detail)
+            // Double Horizontal Rings / Collars
             const ring1 = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.08, 16), goldMetalMat);
             ring1.position.y = 0.65;
             trishulGroup.add(ring1);
@@ -1700,13 +1807,13 @@
             ring2.position.y = 0.53;
             trishulGroup.add(ring2);
 
-            // Center Shaft (stick)
+            // Center Shaft
             const shaftGeo = new THREE.CylinderGeometry(0.05, 0.05, 3.8, 16);
             const shaftMesh = new THREE.Mesh(shaftGeo, goldMetalMat);
             shaftMesh.position.y = -1.3;
             trishulGroup.add(shaftMesh);
 
-            // Traditional dual-cone Damru (Drum) tied on shaft
+            // Dual-cone Damru
             const damruGroup = new THREE.Group();
             const damruCone1 = new THREE.Mesh(new THREE.ConeGeometry(0.2, 0.32, 16), goldMetalMat);
             damruCone1.position.y = 0.14;
@@ -1718,20 +1825,44 @@
             damruGroup.position.y = -0.8;
             trishulGroup.add(damruGroup);
 
-            // Initial Position: Dropped high, tilted ready to crash
+            // Two hanging red ribbon banners (realistic spline tube geometry)
+            const ribbonMat = new THREE.MeshStandardMaterial({
+                color: 0xbe185d,
+                roughness: 0.85
+            });
+
+            const ribbonCurve1 = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, -0.8, 0.08),
+                new THREE.Vector3(-0.25, -1.5, 0.2),
+                new THREE.Vector3(0.05, -2.1, 0.1),
+                new THREE.Vector3(-0.15, -2.7, 0.25)
+            ]);
+            const ribbonMesh1 = new THREE.Mesh(new THREE.TubeGeometry(ribbonCurve1, 20, 0.08, 8, false), ribbonMat);
+            trishulGroup.add(ribbonMesh1);
+
+            const ribbonCurve2 = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0.05, -0.8, 0.04),
+                new THREE.Vector3(0.2, -1.4, 0.18),
+                new THREE.Vector3(-0.05, -2.0, 0.08),
+                new THREE.Vector3(0.12, -2.6, 0.2)
+            ]);
+            const ribbonMesh2 = new THREE.Mesh(new THREE.TubeGeometry(ribbonCurve2, 20, 0.07, 8, false), ribbonMat);
+            trishulGroup.add(ribbonMesh2);
+
+            // Set Drop Height position
             trishulGroup.position.set(0, 18, 0);
             trishulGroup.rotation.set(0.12, 0, 0.18);
             scene.add(trishulGroup);
 
             // Glowing Shockwave impact Ring
-            const ringGeo = new THREE.RingGeometry(0.1, 2.5, 32);
-            const ringMat = new THREE.MeshBasicMaterial({
+            const ringGeo2 = new THREE.RingGeometry(0.1, 2.5, 32);
+            const ringMat2 = new THREE.MeshBasicMaterial({
                 color: activeThemeColor,
                 side: THREE.DoubleSide,
                 transparent: true,
                 opacity: 0
             });
-            shockwaveRing = new THREE.Mesh(ringGeo, ringMat);
+            shockwaveRing = new THREE.Mesh(ringGeo2, ringMat2);
             shockwaveRing.rotation.x = Math.PI / 2;
             shockwaveRing.position.y = -2.99;
             scene.add(shockwaveRing);
@@ -1769,6 +1900,100 @@
             animateLoader();
         }
 
+        // Programmatic lightning generator (Background Thunder flash)
+        function createLightning() {
+            // Clear any active bolt
+            lightningLines.forEach(l => scene.remove(l));
+            lightningLines = [];
+
+            const points = [];
+            const segments = 12;
+            let current = new THREE.Vector3((Math.random() - 0.5) * 15, 12, (Math.random() - 0.5) * 15);
+            points.push(current.clone());
+
+            const target = new THREE.Vector3((Math.random() - 0.5) * 6, -3, (Math.random() - 0.5) * 6);
+
+            for (let i = 1; i <= segments; i++) {
+                const next = new THREE.Vector3().lerpVectors(current, target, 1 / (segments - i + 1));
+                if (i < segments) {
+                    next.x += (Math.random() - 0.5) * 1.5;
+                    next.y += (Math.random() - 0.5) * 0.4;
+                    next.z += (Math.random() - 0.5) * 1.5;
+                } else {
+                    next.copy(target);
+                }
+                points.push(next.clone());
+                current.copy(next);
+            }
+
+            const geom = new THREE.BufferGeometry().setFromPoints(points);
+            const mat = new THREE.LineBasicMaterial({
+                color: activeThemeColor === "#0284c7" ? 0xbe185d : 0xffffff,
+                linewidth: 3
+            });
+            const line = new THREE.Line(geom, mat);
+            scene.add(line);
+            lightningLines.push(line);
+
+            // Screen Flash
+            const oldBg = scene.background.clone();
+            const oldFog = scene.fog.color.clone();
+            const flashColor = activeThemeColor === "#0284c7" ? 0xffeef5 : 0xe0f7ff;
+            scene.background.set(flashColor);
+            scene.fog.color.set(flashColor);
+
+            setTimeout(() => {
+                scene.background.copy(oldBg);
+                scene.fog.color.copy(oldFog);
+                lightningLines.forEach(l => scene.remove(l));
+            }, 60);
+
+            // Occasional double strike
+            if (Math.random() > 0.5) {
+                setTimeout(createLightning, 120);
+            }
+        }
+
+        // Direct lightning strike on Trishul spear tip upon collision
+        function strikeTrishul() {
+            const points = [];
+            const trishulTip = new THREE.Vector3(0, 1.4, 0); // Position of tip at landing y=-2.2
+            let current = new THREE.Vector3(0, 15, 0);
+            points.push(current.clone());
+
+            const segments = 15;
+            for (let i = 1; i <= segments; i++) {
+                const next = new THREE.Vector3().lerpVectors(current, trishulTip, 1 / (segments - i + 1));
+                if (i < segments) {
+                    next.x += (Math.random() - 0.5) * 1.2;
+                    next.z += (Math.random() - 0.5) * 1.2;
+                } else {
+                    next.copy(trishulTip);
+                }
+                points.push(next.clone());
+                current.copy(next);
+            }
+
+            const geom = new THREE.BufferGeometry().setFromPoints(points);
+            const mat = new THREE.LineBasicMaterial({ color: 0xffffff, linewidth: 4 });
+            const line = new THREE.Line(geom, mat);
+            scene.add(line);
+
+            const oldBg = scene.background.clone();
+            const oldFog = scene.fog.color.clone();
+            scene.background.set(0xffffff);
+            scene.fog.color.set(0xffffff);
+
+            // Ignite OM glow
+            omMesh.material.opacity = 0.95;
+
+            setTimeout(() => {
+                scene.background.copy(oldBg);
+                scene.fog.color.copy(oldFog);
+                scene.remove(line);
+            }, 100);
+        }
+
         function animateLoader() {
             requestAnimationFrame(animateLoader);
             elapsedFrames++;
@@ -1780,13 +2005,16 @@
                 trishulGroup.rotation.z *= 0.95;
                 trishulGroup.rotation.x *= 0.95;
             } else if (!landingTriggered) {
-                // 2. Impact Event
+                // 2. Collision Impact
                 landingTriggered = true;
                 trishulGroup.position.y = -2.2;
-                trishulGroup.rotation.set(0, 0, 0); // straight pierce
-                shakeIntensity = 0.35; // Trigger camera shake
-                shockwaveRing.material.opacity = 0.8; // Trigger glow wave
-                particles.material.opacity = 1.0; // Trigger particles visibility
+                trishulGroup.rotation.set(0, 0, 0); 
+                shakeIntensity = 0.38; // camera shake
+                shockwaveRing.material.opacity = 0.8; // shockwave wave
+                particles.material.opacity = 1.0; // sparks
+
+                // Volumetric lightning strike direct to spear tip
+                strikeTrishul();
 
                 // 3. COLLISION REVEAL ANIMATION (Emerging logo floats up)
                 setTimeout(() => {
@@ -1806,46 +2034,58 @@
                         enterBtn.style.transform = "translateY(0)";
                         enterBtn.style.pointerEvents = "all";
                     }
-                }, 350); // Delayed reveal after collision sparks spread
+                }, 400); 
             }
 
-            // 3. Shockwave expansion & decay
+            // 3. Shockwave expansion
             if (landingTriggered && shockwaveRing.material.opacity > 0) {
                 shockwaveScale += 0.12;
                 shockwaveRing.scale.set(shockwaveScale, shockwaveScale, 1);
                 shockwaveRing.material.opacity -= 0.02;
             }
 
-            // 4. Camera Shake handling
+            // 4. Camera Shake
             if (shakeIntensity > 0) {
                 camera.position.x = (Math.random() - 0.5) * shakeIntensity;
                 camera.position.y = 5 + (Math.random() - 0.5) * shakeIntensity;
-                shakeIntensity *= 0.92; // Dampen shake
+                shakeIntensity *= 0.92;
             } else {
                 camera.position.x = 0;
                 camera.position.y = 5;
             }
 
-            // 5. Physics Simulated Particle Sparks
+            // 5. Physics Simulated Particles
             if (landingTriggered && particles.material.opacity > 0) {
                 const posArr = particles.geometry.attributes.position.array;
                 for (let i = 0; i < 80; i++) {
                     posArr[i*3] += particleVelocities[i].x * 0.016;
                     posArr[i*3+1] += particleVelocities[i].y * 0.016;
                     posArr[i*3+2] += particleVelocities[i].z * 0.016;
-
-                    // Apply gravity drag to particles
                     particleVelocities[i].y -= 0.28;
                 }
                 particles.geometry.attributes.position.needsUpdate = true;
-                particles.material.opacity -= 0.015; // fade out particles
+                particles.material.opacity -= 0.015;
             }
 
-            // Idle camera orbital movement
+            // 6. Floating rock debris update
+            if (window.debrisRocks) {
+                window.debrisRocks.forEach(rock => {
+                    const offset = Math.sin(elapsedFrames * rock.speed + rock.seed) * 0.005;
+                    rock.mesh.position.y += offset;
+                    rock.mesh.rotation.y += 0.005;
+                });
+            }
+
+            // 7. Background Lightning trigger loop
+            if (landingTriggered && Math.random() < 0.0035) {
+                createLightning();
+            }
+
+            // Camera drift orbit
             if (landingTriggered) {
                 camera.position.x += Math.sin(elapsedFrames * 0.005) * 0.005;
                 camera.position.z = 12 + Math.cos(elapsedFrames * 0.005) * 0.1;
-                trishulGroup.rotation.y += 0.003; // Gentle idle rotate
+                trishulGroup.rotation.y += 0.003; 
             }
 
             renderer.render(scene, camera);
