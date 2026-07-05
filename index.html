@@ -97,8 +97,6 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-
-
         /* Brand Watermark Overlay */
         .watermark-container {
             position: fixed;
@@ -1438,7 +1436,8 @@
         </div>
     </footer>
 
-
+    <!-- Official Three.js Renderer Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
     <!-- Interactive Scripts: Particle Canvas, Theme Switch, Preloader Theme and Action -->
     <script>
@@ -1484,9 +1483,7 @@
             localStorage.setItem("theme", theme);
         });
 
-
-
-        // 3. 3D Parallax Movement
+        // 2. 3D Parallax Movement
         const parallaxGrid = document.getElementById("parallax-grid");
         window.addEventListener("mousemove", (e) => {
             const x = (e.clientX - window.innerWidth / 2) / 35;
@@ -1494,7 +1491,7 @@
             parallaxGrid.style.transform = `translate(${x}px, ${y}px)`;
         });
 
-        // 4. Cyber Terminal Interactive Shell Engine
+        // 3. Cyber Terminal Interactive Shell Engine
         const terminalScreen = document.getElementById("terminal-screen");
         const terminalInput = document.getElementById("terminal-input");
         const terminalWindow = document.getElementById("terminal-window");
@@ -1588,7 +1585,7 @@
             }
         }
 
-        // 5. Advanced Sweep Background Radar Canvas
+        // 4. Advanced Sweep Background Radar Canvas
         const radarCanvas = document.getElementById('radar-canvas');
         const radarCtx = radarCanvas.getContext('2d');
 
@@ -1690,36 +1687,36 @@
         }
         animateRadar();
 
-        // 6. Interactive HUD Node Canvas Map
+        // 5. Interactive HUD Node 3D Map (Three.js WebGL Upgrade)
         const nodeCanvas = document.getElementById("node-canvas");
-        const nodeCtx = nodeCanvas.getContext("2d");
         const hudDetails = document.getElementById("hud-details");
         const hudNodeName = document.getElementById("hud-node-name");
         const hudNodeDesc = document.getElementById("hud-node-desc");
         const hudNodeLoad = document.getElementById("hud-node-load");
         const hudNodeLatency = document.getElementById("hud-node-latency");
 
-        let canvasWidth = nodeCanvas.width = nodeCanvas.parentElement.clientWidth;
-        let canvasHeight = nodeCanvas.height = nodeCanvas.parentElement.clientHeight;
+        let nodeScene, nodeCamera, nodeRenderer, networkGroup;
+        let raycaster, mouseVec;
+        let nodeMeshes = [];
+        let connectionTubes = [];
+        let pulseParticles = [];
+        let hovered3DNode = null;
+        let targetRotationX = 0;
+        let targetRotationY = 0;
+        let currentRotationX = 0;
+        let currentRotationY = 0;
+        let globalPulseTime = 0;
+        let isMapPulsing = false;
 
-        window.addEventListener("resize", () => {
-            if (nodeCanvas.parentElement) {
-                canvasWidth = nodeCanvas.width = nodeCanvas.parentElement.clientWidth;
-                canvasHeight = nodeCanvas.height = nodeCanvas.parentElement.clientHeight;
-            }
-        });
-
-        // Nodes setup
-        const nodes = [
-            { id: 1, name: "Escrow Shield", desc: "Contra escrow connection manager securing milestones.", x: 0.5, y: 0.15, load: "0%", latency: "0.2ms", color: "#ffaa00" },
-            { id: 2, name: "API Gateway", desc: "Central entrypoint distributing server commands securely.", x: 0.25, y: 0.45, load: "14%", latency: "1.4ms" },
-            { id: 3, name: "Graph DB Engine", desc: "Neo4j mapping cluster triaging project dependency models.", x: 0.5, y: 0.5, load: "28%", latency: "2.1ms" },
-            { id: 4, name: "LLM Agent Engine", desc: "Automated vulnerability scanner reasoning threat vectors.", x: 0.75, y: 0.45, load: "8%", latency: "5.4ms" },
-            { id: 5, name: "Nexalith Store", desc: "Framer Template repository & payment gateway validator.", x: 0.5, y: 0.8, load: "2%", latency: "1.2ms" }
+        const nodes3D = [
+            { id: 1, name: "Escrow Shield", desc: "Contra escrow connection manager securing milestones.", x: 0, y: 1.8, z: 0.2, load: "0%", latency: "0.2ms", color: 0xffaa00 },
+            { id: 2, name: "API Gateway", desc: "Central entrypoint distributing server commands securely.", x: -1.7, y: 0, z: 0.8, load: "14%", latency: "1.4ms", color: null },
+            { id: 3, name: "Graph DB Engine", desc: "Neo4j mapping cluster triaging project dependency models.", x: 0, y: -0.2, z: 0, load: "28%", latency: "2.1ms", color: null },
+            { id: 4, name: "LLM Agent Engine", desc: "Automated vulnerability scanner reasoning threat vectors.", x: 1.7, y: 0, z: -0.8, load: "8%", latency: "5.4ms", color: null },
+            { id: 5, name: "Nexalith Store", desc: "Framer Template repository & payment gateway validator.", x: 0, y: -1.8, z: -0.2, load: "2%", latency: "1.2ms", color: null }
         ];
 
-        // Connection lines setup
-        const connections = [
+        const connections3D = [
             { from: 1, to: 3 },
             { from: 2, to: 3 },
             { from: 4, to: 3 },
@@ -1728,134 +1725,268 @@
             { from: 4, to: 1 }
         ];
 
-        let hoveredNode = null;
-        let mapPulseTime = 0;
+        function init3DNodeMap() {
+            const container = nodeCanvas.parentElement;
 
-        function triggerMapPulsar() {
-            mapPulseTime = 1; // Starts a global sweep wave
+            // Scene
+            nodeScene = new THREE.Scene();
+
+            // Camera
+            nodeCamera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+            nodeCamera.position.set(0, 0, 7.5);
+
+            // Renderer - link directly to existing canvas
+            nodeRenderer = new THREE.WebGLRenderer({ canvas: nodeCanvas, antialias: true, alpha: true });
+            nodeRenderer.setSize(container.clientWidth, container.clientHeight);
+            nodeRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+            nodeRenderer.setClearColor(0x000000, 0); 
+
+            // Lights
+            const ambient = new THREE.AmbientLight(0xffffff, 0.55);
+            nodeScene.add(ambient);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
+            dirLight.position.set(3, 5, 4);
+            nodeScene.add(dirLight);
+
+            // Group to hold network graph for mouse parallax tilt
+            networkGroup = new THREE.Group();
+            nodeScene.add(networkGroup);
+
+            const isLight = document.body.classList.contains("light-theme");
+            const primaryColor = isLight ? 0x0284c7 : 0x00f0ff;
+            const lineColor = isLight ? 0x0284c7 : 0x00f0ff;
+
+            // Raycaster
+            raycaster = new THREE.Raycaster();
+            mouseVec = new THREE.Vector2(-1, -1);
+
+            // 1. Create Node spheres
+            nodeMeshes = [];
+            nodes3D.forEach(nodeData => {
+                const sphereGeo = new THREE.SphereGeometry(0.24, 32, 32);
+                const sphereMat = new THREE.MeshStandardMaterial({
+                    color: nodeData.color ? nodeData.color : primaryColor,
+                    roughness: 0.1,
+                    metalness: 0.85,
+                    emissive: nodeData.color ? nodeData.color : primaryColor,
+                    emissiveIntensity: 0.4
+                });
+
+                const mesh = new THREE.Mesh(sphereGeo, sphereMat);
+                mesh.position.set(nodeData.x, nodeData.y, nodeData.z);
+                mesh.userData = nodeData;
+                networkGroup.add(mesh);
+                nodeMeshes.push(mesh);
+
+                // Inner glowing core
+                const innerGeo = new THREE.SphereGeometry(0.12, 16, 16);
+                const innerMat = new THREE.MeshBasicMaterial({
+                    color: nodeData.color ? nodeData.color : primaryColor
+                });
+                const innerMesh = new THREE.Mesh(innerGeo, innerMat);
+                mesh.add(innerMesh);
+            });
+
+            // 2. Create connections (neon pipelines)
+            connectionTubes = [];
+            connections3D.forEach(conn => {
+                const fromNode = nodes3D.find(n => n.id === conn.from);
+                const toNode = nodes3D.find(n => n.id === conn.to);
+
+                const startVec = new THREE.Vector3(fromNode.x, fromNode.y, fromNode.z);
+                const endVec = new THREE.Vector3(toNode.x, toNode.y, toNode.z);
+
+                const distance = startVec.distanceTo(endVec);
+                const cylinderGeo = new THREE.CylinderGeometry(0.024, 0.024, distance, 8);
+
+                const cylinderMat = new THREE.MeshStandardMaterial({
+                    color: lineColor,
+                    transparent: true,
+                    opacity: 0.14,
+                    roughness: 0.9,
+                    metalness: 0.1
+                });
+
+                const tubeMesh = new THREE.Mesh(cylinderGeo, cylinderMat);
+
+                const position = new THREE.Vector3().addVectors(startVec, endVec).multiplyScalar(0.5);
+                tubeMesh.position.copy(position);
+
+                const direction = new THREE.Vector3().subVectors(endVec, startVec).normalize();
+                const up = new THREE.Vector3(0, 1, 0);
+                tubeMesh.quaternion.setFromUnitVectors(up, direction);
+
+                networkGroup.add(tubeMesh);
+                connectionTubes.push({
+                    mesh: tubeMesh,
+                    start: startVec,
+                    end: endVec
+                });
+            });
+
+            // 3. Create electron pulses traveling along lines
+            pulseParticles = [];
+            connections3D.forEach(conn => {
+                const fromNode = nodes3D.find(n => n.id === conn.from);
+                const toNode = nodes3D.find(n => n.id === conn.to);
+                const particleGeo = new THREE.SphereGeometry(0.045, 8, 8);
+                const particleMat = new THREE.MeshBasicMaterial({
+                    color: fromNode.color ? fromNode.color : primaryColor
+                });
+                const pMesh = new THREE.Mesh(particleGeo, particleMat);
+                networkGroup.add(pMesh);
+
+                pulseParticles.push({
+                    mesh: pMesh,
+                    start: new THREE.Vector3(fromNode.x, fromNode.y, fromNode.z),
+                    end: new THREE.Vector3(toNode.x, toNode.y, toNode.z),
+                    progress: Math.random(),
+                    speed: Math.random() * 0.006 + 0.003
+                });
+            });
+
+            // Resize listener
+            window.addEventListener("resize", () => {
+                nodeCamera.aspect = container.clientWidth / container.clientHeight;
+                nodeCamera.updateProjectionMatrix();
+                nodeRenderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            // Mouse listeners for parallax and raycasting hovers
+            container.addEventListener("mousemove", (e) => {
+                const rect = nodeCanvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                mouseVec.x = (mouseX / rect.width) * 2 - 1;
+                mouseVec.y = -(mouseY / rect.height) * 2 + 1;
+
+                targetRotationX = (mouseVec.y) * 0.32;
+                targetRotationY = (mouseVec.x) * 0.32;
+            });
+
+            container.addEventListener("mouseleave", () => {
+                mouseVec.set(-1, -1); // Off screen
+                targetRotationX = 0;
+                targetRotationY = 0;
+            });
+
+            animate3DNodeMap();
         }
 
-        // Mouse hover checker
-        nodeCanvas.addEventListener("mousemove", (e) => {
-            const rect = nodeCanvas.getBoundingClientRect();
-            const mouseX = e.clientX - rect.left;
-            const mouseY = e.clientY - rect.top;
+        function animate3DNodeMap() {
+            requestAnimationFrame(animate3DNodeMap);
 
-            let found = null;
-            nodes.forEach(node => {
-                const px = node.x * canvasWidth;
-                const py = node.y * canvasHeight;
-                const dist = Math.sqrt((mouseX - px)**2 + (mouseY - py)**2);
-                if (dist < 18) {
-                    found = node;
+            // 1. Smooth parallax rotation
+            currentRotationX += (targetRotationX - currentRotationX) * 0.08;
+            currentRotationY += (targetRotationY - currentRotationY) * 0.08;
+            networkGroup.rotation.x = currentRotationX;
+            networkGroup.rotation.y = currentRotationY;
+
+            // 2. Bobbing floating effect
+            const time = Date.now() * 0.001;
+            nodeMeshes.forEach((mesh, index) => {
+                const bob = Math.sin(time + index) * 0.035;
+                const basePos = nodes3D[index];
+                mesh.position.y = basePos.y + bob;
+
+                if (mesh === hovered3DNode) {
+                    const scale = 1.35 + Math.sin(time * 8) * 0.05;
+                    mesh.scale.setScalar(scale);
+                    mesh.material.emissiveIntensity = 0.85;
+                } else {
+                    mesh.scale.setScalar(1.0);
+                    mesh.material.emissiveIntensity = 0.45;
                 }
             });
 
-            if (found !== hoveredNode) {
-                hoveredNode = found;
-                if (hoveredNode) {
-                    hudNodeName.textContent = hoveredNode.name;
-                    hudNodeDesc.textContent = hoveredNode.desc;
-                    hudNodeLoad.textContent = hoveredNode.load;
-                    hudNodeLatency.textContent = hoveredNode.latency;
+            // 3. Connect cylinder alignment matching bobbing nodes
+            connectionTubes.forEach((tube, index) => {
+                const conn = connections3D[index];
+                const fromMesh = nodeMeshes.find(m => m.userData.id === conn.from);
+                const toMesh = nodeMeshes.find(m => m.userData.id === conn.to);
+
+                const startVec = fromMesh.position;
+                const endVec = toMesh.position;
+
+                const distance = startVec.distanceTo(endVec);
+                tube.mesh.scale.set(1, distance / startVec.distanceTo(tube.end), 1); 
+
+                const position = new THREE.Vector3().addVectors(startVec, endVec).multiplyScalar(0.5);
+                tube.mesh.position.copy(position);
+
+                const direction = new THREE.Vector3().subVectors(endVec, startVec).normalize();
+                const up = new THREE.Vector3(0, 1, 0);
+                tube.mesh.quaternion.setFromUnitVectors(up, direction);
+            });
+
+            // 4. Electron pulse trajectories
+            pulseParticles.forEach(particle => {
+                particle.progress += particle.speed;
+                if (particle.progress >= 1.0) {
+                    particle.progress = 0;
+                }
+
+                const connIndex = pulseParticles.indexOf(particle);
+                const conn = connections3D[connIndex];
+                const fromMesh = nodeMeshes.find(m => m.userData.id === conn.from);
+                const toMesh = nodeMeshes.find(m => m.userData.id === conn.to);
+
+                particle.mesh.position.lerpVectors(fromMesh.position, toMesh.position, particle.progress);
+            });
+
+            // 5. Raycasting for hover node detection
+            raycaster.setFromCamera(mouseVec, nodeCamera);
+            const intersects = raycaster.intersectObjects(nodeMeshes);
+
+            if (intersects.length > 0) {
+                const clickedNode = intersects[0].object;
+                if (clickedNode !== hovered3DNode) {
+                    hovered3DNode = clickedNode;
+
+                    const data = hovered3DNode.userData;
+                    hudNodeName.textContent = data.name;
+                    hudNodeDesc.textContent = data.desc;
+                    hudNodeLoad.textContent = data.load;
+                    hudNodeLatency.textContent = data.latency;
                     hudDetails.style.display = "flex";
-                } else {
+                }
+            } else {
+                if (hovered3DNode !== null) {
+                    hovered3DNode = null;
                     hudDetails.style.display = "none";
                 }
             }
-        });
 
-        function animateNodes() {
-            nodeCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-            const isLight = document.body.classList.contains("light-theme");
-            
-            // Core accent colors based on theme
-            const primaryGlow = isLight ? "#0284c7" : "#00f0ff";
-            const lineStroke = isLight ? "rgba(2, 132, 199, 0.12)" : "rgba(0, 240, 255, 0.12)";
+            // 6. Global sweep scan wave
+            if (isMapPulsing) {
+                globalPulseTime += 0.02;
+                if (globalPulseTime > 1.5) {
+                    isMapPulsing = false;
+                    globalPulseTime = 0;
+                }
 
-            // Draw connection lines
-            connections.forEach(conn => {
-                const fromNode = nodes.find(n => n.id === conn.from);
-                const toNode = nodes.find(n => n.id === conn.to);
-                const fx = fromNode.x * canvasWidth;
-                const fy = fromNode.y * canvasHeight;
-                const tx = toNode.x * canvasWidth;
-                const ty = toNode.y * canvasHeight;
-
-                nodeCtx.beginPath();
-                nodeCtx.moveTo(fx, fy);
-                nodeCtx.lineTo(tx, ty);
-                nodeCtx.strokeStyle = lineStroke;
-                nodeCtx.lineWidth = 2;
-                nodeCtx.stroke();
-
-                // Draw moving electron/pulse along connections
-                const time = (Date.now() / 2500) % 1;
-                const ex = fx + (tx - fx) * time;
-                const ey = fy + (ty - fy) * time;
-
-                nodeCtx.beginPath();
-                nodeCtx.arc(ex, ey, 3, 0, Math.PI * 2);
-                nodeCtx.fillStyle = primaryGlow;
-                nodeCtx.fill();
-            });
-
-            // Draw global pulse wave if active
-            if (mapPulseTime > 0) {
-                mapPulseTime += 0.015;
-                if (mapPulseTime > 2) mapPulseTime = 0;
-
-                nodeCtx.beginPath();
-                nodeCtx.arc(canvasWidth * 0.5, canvasHeight * 0.5, mapPulseTime * 180, 0, Math.PI * 2);
-                nodeCtx.strokeStyle = `rgba(0, 240, 255, ${0.3 * (1 - mapPulseTime/2)})`;
-                nodeCtx.lineWidth = 1.5;
-                nodeCtx.stroke();
+                nodeMeshes.forEach(mesh => {
+                    const dist = mesh.position.length();
+                    if (Math.abs(dist - globalPulseTime * 2.2) < 0.3) {
+                        mesh.material.emissiveIntensity = 1.0;
+                    }
+                });
             }
 
-            // Draw nodes
-            nodes.forEach(node => {
-                const px = node.x * canvasWidth;
-                const py = node.y * canvasHeight;
-                const isHovered = hoveredNode === node;
-
-                // Glowing outer aura
-                nodeCtx.beginPath();
-                nodeCtx.arc(px, py, isHovered ? 24 : 14, 0, Math.PI * 2);
-                nodeCtx.fillStyle = isHovered 
-                    ? `rgba(0, 240, 255, 0.15)` 
-                    : `rgba(0, 240, 255, 0.03)`;
-                nodeCtx.fill();
-
-                // Core outline
-                nodeCtx.beginPath();
-                nodeCtx.arc(px, py, 9, 0, Math.PI * 2);
-                nodeCtx.strokeStyle = node.color ? node.color : primaryGlow;
-                nodeCtx.lineWidth = 2.5;
-                nodeCtx.fillStyle = isLight ? "#ffffff" : "#060a14";
-                nodeCtx.fill();
-                nodeCtx.stroke();
-
-                // Small pulsing dot inside core
-                const pulseSize = 3 + Math.abs(Math.sin(Date.now() / 300) * 1.5);
-                nodeCtx.beginPath();
-                nodeCtx.arc(px, py, pulseSize, 0, Math.PI * 2);
-                nodeCtx.fillStyle = node.color ? node.color : primaryGlow;
-                nodeCtx.fill();
-
-                // Text Labels above node
-                nodeCtx.font = isHovered ? "bold 10px Orbitron" : "10px Orbitron";
-                nodeCtx.fillStyle = isLight ? "#1c1917" : "#e2e8f0";
-                nodeCtx.textAlign = "center";
-                nodeCtx.fillText(node.name.toUpperCase(), px, py - 20);
-            });
-
-            requestAnimationFrame(animateNodes);
+            nodeRenderer.render(nodeScene, nodeCamera);
         }
 
-        // Start node animation loop
-        setTimeout(animateNodes, 100);
+        function triggerMapPulsar() {
+            isMapPulsing = true;
+            globalPulseTime = 0;
+        }
 
-        // 7. Live System Monitor Widget Fluctuations
+        // Initialize 3D map on document load
+        window.addEventListener("DOMContentLoaded", init3DNodeMap);
+
+        // 6. Live System Monitor Widget Fluctuations
         const latencyVal = document.getElementById("latency-val");
         const cpuVal = document.getElementById("cpu-val");
 
