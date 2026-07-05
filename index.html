@@ -166,12 +166,12 @@
         .nav-actions-wrapper {
             display: flex;
             align-items: center;
-            gap: 36px;
+            gap: 24px;
         }
 
         .nav-links {
             display: flex;
-            gap: 36px;
+            gap: 32px;
             align-items: center;
             z-index: 10;
         }
@@ -215,11 +215,15 @@
         .nav-cta {
             background: linear-gradient(135deg, var(--cyan), var(--primary));
             color: #06080c !important;
-            padding: 12px 28px;
+            padding: 12px 24px;
             border-radius: 8px;
             font-weight: 700;
             box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            text-decoration: none;
+            font-family: var(--font-display);
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
         }
 
         .nav-cta:hover {
@@ -314,6 +318,7 @@
         .hero-actions {
             display: flex;
             gap: 20px;
+            align-items: center;
         }
 
         .hero-visual {
@@ -879,7 +884,11 @@
                 margin: 0 auto 40px;
             }
             .hero-actions {
-                justify-content: center;
+                flex-direction: column;
+                gap: 16px;
+                width: 100%;
+                max-width: 320px;
+                margin: 0 auto;
             }
             .product-card {
                 flex-direction: column;
@@ -936,6 +945,10 @@
                 </div>
                 <!-- Light & Dark Theme Toggle Button -->
                 <button id="theme-toggle" aria-label="Toggle light and dark theme">🌙</button>
+                
+                <!-- Official Contra Hire Me Button Embed -->
+                <div class="contra-hire-me-button" data-analyticsUserId="a2a7628f-7c1f-4533-8aa0-9786ac93a94e" data-theme="dark" data-username="tulasi_krishnakumar_e6i7saj7" style="display: inline-block; vertical-align: middle;"></div>
+                
                 <a href="https://calendly.com/k3_devsec_labs" class="nav-cta">Connect</a>
             </div>
         </div>
@@ -956,6 +969,9 @@
                 <div class="hero-actions">
                     <a href="#services" class="btn btn-primary">Our Services</a>
                     <a href="#products" class="btn btn-outline">Framer Template Shop</a>
+                    
+                    <!-- Secondary Hero Contra Hire Embed -->
+                    <div class="contra-hire-me-button" data-analyticsUserId="a2a7628f-7c1f-4533-8aa0-9786ac93a94e" data-theme="dark" data-username="tulasi_krishnakumar_e6i7saj7"></div>
                 </div>
             </div>
             <div class="hero-visual">
@@ -993,7 +1009,7 @@
                             <li>PostgreSQL & Redis database setup</li>
                             <li>WebSocket real-time logic integration</li>
                         </ul>
-                        <a href="https://contra.com/s/deva1008" target="_blank" class="btn btn-primary btn-block">Book Service</a>
+                        <a href="https://contra.com/s/tulasi_krishnakumar_e6i7saj7" target="_blank" class="btn btn-primary btn-block">Book Service</a>
                     </div>
                 </div>
 
@@ -1016,7 +1032,7 @@
                             <li>Clean component architectures</li>
                             <li>Dynamic SEO configuration</li>
                         </ul>
-                        <a href="https://contra.com/s/deva1008" target="_blank" class="btn btn-primary btn-block">Book Service</a>
+                        <a href="https://contra.com/s/tulasi_krishnakumar_e6i7saj7" target="_blank" class="btn btn-primary btn-block">Book Service</a>
                     </div>
                 </div>
 
@@ -1039,7 +1055,7 @@
                             <li>Celery & Redis background task queues</li>
                             <li>OAuth2 security audit integration</li>
                         </ul>
-                        <a href="https://contra.com/s/deva1008" target="_blank" class="btn btn-primary btn-block">Book Service</a>
+                        <a href="https://contra.com/s/tulasi_krishnakumar_e6i7saj7" target="_blank" class="btn btn-primary btn-block">Book Service</a>
                     </div>
                 </div>
             </div>
@@ -1208,18 +1224,34 @@
         </div>
     </footer>
 
+    <!-- Official Contra Hire SDK Script -->
+    <script async src="https://contra.com/static/embed/sdk.js" charset="utf-8"></script>
+
     <!-- Interactive Scripts: Particle Canvas, Text Scrambler, Live Widget Ticks, Theme Switch -->
     <script>
-        // 1. Theme Toggle System
+        // 1. Theme Toggle System with Contra Embed Integration
         const themeToggle = document.getElementById("theme-toggle");
+        const contraButtons = document.querySelectorAll(".contra-hire-me-button");
         
+        function updateContraTheme(themeMode) {
+            contraButtons.forEach(btn => {
+                btn.setAttribute("data-theme", themeMode);
+            });
+            // Re-execute SDK rendering if global Contra variable exists
+            if (window.Contra && window.Contra.render) {
+                window.Contra.render();
+            }
+        }
+
         // Load saved preference or default to dark
         const currentTheme = localStorage.getItem("theme");
         if (currentTheme === "light") {
             document.body.classList.add("light-theme");
             themeToggle.textContent = "☀️";
+            updateContraTheme("light");
         } else {
             themeToggle.textContent = "🌙";
+            updateContraTheme("dark");
         }
 
         themeToggle.addEventListener("click", () => {
@@ -1228,8 +1260,10 @@
             if (document.body.classList.contains("light-theme")) {
                 theme = "light";
                 themeToggle.textContent = "☀️";
+                updateContraTheme("light");
             } else {
                 themeToggle.textContent = "🌙";
+                updateContraTheme("dark");
             }
             localStorage.setItem("theme", theme);
         });
