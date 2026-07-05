@@ -2247,15 +2247,13 @@
             lightningLines.push(line);
 
             // Screen Flash
-            const oldBg = scene.background.clone();
-            const oldFog = scene.fog.color.clone();
             const flashColor = 0xe0f7ff;
             scene.background.set(flashColor);
             scene.fog.color.set(flashColor);
 
             setTimeout(() => {
-                scene.background.copy(oldBg);
-                scene.fog.color.copy(oldFog);
+                scene.background.set("#030508");
+                scene.fog.color.set("#030508");
                 lightningLines.forEach(l => scene.remove(l));
             }, 60);
 
@@ -2289,16 +2287,14 @@
             const line = new THREE.Line(geom, mat);
             scene.add(line);
 
-            const oldBg = scene.background.clone();
-            const oldFog = scene.fog.color.clone();
             scene.background.set(0xffffff);
             scene.fog.color.set(0xffffff);
 
             omMesh.material.opacity = 0.95;
 
             setTimeout(() => {
-                scene.background.copy(oldBg);
-                scene.fog.color.copy(oldFog);
+                scene.background.set("#030508");
+                scene.fog.color.set("#030508");
                 scene.remove(line);
             }, 100);
         }
