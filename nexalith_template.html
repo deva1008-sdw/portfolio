@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nexalith — Cybersecurity & AI SaaS Platform</title>
+    <meta name="description" content="Enterprise-grade threat detection, API security, and zero-trust architecture powered by AI. Built for the next generation of digital infrastructure.">
+    <meta property="og:title" content="Nexalith — Cybersecurity & AI SaaS Platform">
+    <meta property="og:description" content="Secure. Scalable. Deployed. Enterprise AI-powered security platform.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========== DESIGN SYSTEM ========== */
+        :root {
+            --bg-deep: #060a14;
+            --bg-card: rgba(10, 16, 30, 0.85);
+            --bg-glass: rgba(0, 240, 255, 0.04);
+            --cyan: #00f0ff;
+            --cyan-dim: rgba(0, 240, 255, 0.15);
+            --cyan-glow: rgba(0, 240, 255, 0.08);
+            --purple: #bd00ff;
+            --purple-dim: rgba(189, 0, 255, 0.12);
+            --amber: #ffaa00;
+            --red: #ff0055;
+            --border: rgba(0, 240, 255, 0.12);
+            --border-strong: rgba(0, 240, 255, 0.25);
+            --text-primary: #f0f4ff;
+            --text-muted: #64748b;
+            --text-dim: #334155;
+            --font-head: 'Syne', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            --radius: 16px;
+            --radius-sm: 10px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ========== UTILITY ========== */
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+        .section-tag {
+            display: inline-block;
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            letter-spacing: 0.12em;
+            color: var(--cyan);
+            background: var(--cyan-dim);
+            border: 1px solid var(--border-strong);
+            border-radius: 20px;
+            padding: 4px 14px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+        .section-header { text-align: center; margin-bottom: 64px; }
+        .section-header h2 {
+            font-family: var(--font-head);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+        }
+        .section-header p { color: var(--text-muted); max-width: 540px; margin: 0 auto; font-size: 1rem; }
+
+        section { padding: 100px 0; }
+
+        /* ========== NAVBAR ========== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 16px 0;
+            transition: var(--transition);
+        }
+        nav.scrolled {
+            background: rgba(6, 10, 20, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-logo {
+            font-family: var(--font-head);
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, var(--cyan), var(--purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+            list-style: none;
+        }
+        .nav-links a {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.2s;
+            font-weight: 500;
+        }
+        .nav-links a:hover { color: var(--text-primary); }
+        .nav-cta {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            font-family: var(--font-body);
+        }
+        .btn-primary {
+            background: var(--cyan);
+            color: #060a14;
+        }
+        .btn-primary:hover {
+            background: #00d4e0;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0, 240, 255, 0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border-strong);
+        }
+        .btn-outline:hover {
+            background: var(--bg-glass);
+            border-color: var(--cyan);
+            color: var(--cyan);
+        }
+        .btn-lg { padding: 14px 32px; font-size: 1rem; border-radius: var(--radius); }
+
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; }
+        .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: var(--transition); }
+
+        /* ========== HERO ========== */
+        #hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            padding: 0;
+        }
+        #hero-canvas {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            text-align: center;
+            padding: 120px 24px 80px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid var(--border-strong);
+            border-radius: 40px;
+            padding: 6px 16px 6px 8px;
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--cyan);
+            margin-bottom: 32px;
+            letter-spacing: 0.05em;
+        }
+        .hero-badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--cyan);
+            border-radius: 50%;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        .hero-title {
+            font-family: var(--font-head);
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            margin-bottom: 24px;
+        }
+        .hero-title .gradient-text {
+            background: linear-gradient(135deg, var(--cyan) 0%, var(--purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .typewriter-wrapper {
+            display: inline-block;
+            min-width: 200px;
+            text-align: left;
+        }
+        #typewriter {
+            border-right: 3px solid var(--cyan);
+            padding-right: 4px;
+            animation: cursor-blink 0.8s step-end infinite;
+        }
+        @keyframes cursor-blink {
+            0%, 100% { border-color: var(--cyan); }
+            50% { border-color: transparent; }
+        }
+        .hero-sub {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 560px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 64px;
+        }
+        .hero-stats {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .stat-badge {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(10, 16, 30, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 20px;
+        }
+        .stat-badge-icon { font-size: 1.1rem; }
+        .stat-badge-text { font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan); font-weight: 500; }
+
+        /* ========== LOGOS STRIP ========== */
+        #logos {
+            padding: 40px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .logos-label {
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--text-dim);
+            letter-spacing: 0.1em;
+            margin-bottom: 28px;
+            text-transform: uppercase;
+        }
+        .logos-track {
+            display: flex;
+            gap: 56px;
+            animation: scroll-logos 20s linear infinite;
+            width: max-content;
+        }
+        .logos-track-wrap { overflow: hidden; }
+        @keyframes scroll-logos {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .logo-item {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-dim);
+            white-space: nowrap;
+            letter-spacing: -0.01em;
+            transition: color 0.3s;
+        }
+
+        /* ========== FEATURES ========== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 20px;
+        }
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 32px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--cyan), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .feature-card:hover {
+            border-color: var(--border-strong);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 60px rgba(0, 240, 255, 0.06);
+        }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--cyan-dim);
+            border: 1px solid var(--border-strong);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        .feature-card h3 {
+            font-family: var(--font-head);
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .feature-card p { color: var(--text-muted); font-size: 0.9rem; line-height: 1.65; }
+
+        /* ========== STATS BAR ========== */
+        #stats {
+            padding: 60px 0;
+            background: linear-gradient(180deg, transparent, rgba(0,240,255,0.03), transparent);
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .stat-item {
+            background: var(--bg-deep);
+            padding: 40px 24px;
+            text-align: center;
+        }
+        .stat-number {
+            font-family: var(--font-head);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            color: var(--cyan);
+            display: block;
+            letter-spacing: -0.02em;
+        }
+        .stat-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 6px; }
+
+        /* ========== PRICING ========== */
+        .pricing-toggle {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            justify-content: center;
+            margin-bottom: 48px;
+        }
+        .toggle-label { font-size: 0.9rem; color: var(--text-muted); }
+        .toggle-label.active { color: var(--text-primary); font-weight: 600; }
+        .toggle-switch {
+            width: 52px;
+            height: 28px;
+            background: var(--border-strong);
+            border-radius: 14px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .toggle-switch.annual { background: var(--cyan); }
+        .toggle-knob {
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.3s;
+        }
+        .toggle-switch.annual .toggle-knob { transform: translateX(24px); }
+        .annual-badge {
+            background: rgba(0,240,255,0.1);
+            border: 1px solid var(--border-strong);
+            border-radius: 20px;
+            padding: 3px 10px;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--cyan);
+        }
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            align-items: start;
+        }
+        .pricing-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 32px;
+            position: relative;
+            transition: var(--transition);
+        }
+        .pricing-card.popular {
+            border-color: var(--cyan);
+            box-shadow: 0 0 40px rgba(0, 240, 255, 0.1);
+            transform: scale(1.03);
+        }
+        .popular-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--cyan);
+            color: #060a14;
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 4px 16px;
+            border-radius: 20px;
+            letter-spacing: 0.08em;
+            white-space: nowrap;
+        }
+        .plan-name {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .plan-price {
+            font-family: var(--font-head);
+            font-size: 3rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+        .plan-price sup { font-size: 1.2rem; vertical-align: top; margin-top: 8px; }
+        .plan-period { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 24px; }
+        .plan-divider { height: 1px; background: var(--border); margin: 24px 0; }
+        .plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+        .plan-features li {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        .plan-features li .check {
+            width: 18px;
+            height: 18px;
+            background: var(--cyan-dim);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            color: var(--cyan);
+            flex-shrink: 0;
+        }
+        .btn-plan {
+            width: 100%;
+            justify-content: center;
+            padding: 13px;
+            border-radius: var(--radius-sm);
+        }
+        .btn-plan-primary { background: var(--cyan); color: #060a14; font-weight: 700; }
+        .btn-plan-primary:hover { background: #00d4e0; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0, 240, 255, 0.3); }
+        .btn-plan-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border-strong); }
+        .btn-plan-outline:hover { border-color: var(--cyan); color: var(--cyan); background: var(--cyan-glow); }
+
+        /* ========== HOW IT WORKS ========== */
+        .steps-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr auto 1fr;
+            gap: 0;
+            align-items: start;
+        }
+        .step-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 36px 28px;
+            text-align: center;
+            transition: var(--transition);
+        }
+        .step-card:hover {
+            border-color: var(--border-strong);
+            box-shadow: 0 16px 48px rgba(0, 240, 255, 0.06);
+        }
+        .step-number {
+            font-family: var(--font-mono);
+            font-size: 0.65rem;
+            color: var(--cyan);
+            letter-spacing: 0.1em;
+            margin-bottom: 16px;
+            display: block;
+        }
+        .step-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--cyan-dim), var(--purple-dim));
+            border: 1px solid var(--border-strong);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin: 0 auto 20px;
+        }
+        .step-card h3 {
+            font-family: var(--font-head);
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .step-card p { color: var(--text-muted); font-size: 0.875rem; line-height: 1.6; }
+        .step-connector {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 8px;
+            margin-top: 80px;
+        }
+        .step-connector-line {
+            height: 1px;
+            width: 60px;
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            position: relative;
+        }
+        .step-connector-arrow {
+            color: var(--cyan);
+            font-size: 1.2rem;
+            line-height: 0;
+        }
+
+        /* ========== TESTIMONIALS ========== */
+        #testimonials { overflow: hidden; }
+        .testimonials-track-wrap { overflow: hidden; position: relative; }
+        .testimonials-track-wrap::before,
+        .testimonials-track-wrap::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100px;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .testimonials-track-wrap::before { left: 0; background: linear-gradient(90deg, var(--bg-deep), transparent); }
+        .testimonials-track-wrap::after { right: 0; background: linear-gradient(-90deg, var(--bg-deep), transparent); }
+        .testimonials-track {
+            display: flex;
+            gap: 20px;
+            animation: scroll-testimonials 30s linear infinite;
+            width: max-content;
+        }
+        @keyframes scroll-testimonials {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .testimonial-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 28px;
+            width: 340px;
+            flex-shrink: 0;
+        }
+        .testimonial-stars { color: var(--amber); font-size: 0.8rem; margin-bottom: 14px; letter-spacing: 2px; }
+        .testimonial-text { font-size: 0.9rem; color: var(--text-muted); line-height: 1.65; margin-bottom: 20px; font-style: italic; }
+        .testimonial-author { display: flex; align-items: center; gap: 12px; }
+        .testimonial-avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-head);
+            font-size: 0.9rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .testimonial-name { font-weight: 600; font-size: 0.875rem; }
+        .testimonial-role { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* ========== CTA ========== */
+        #cta {
+            background: radial-gradient(ellipse at center, rgba(0, 240, 255, 0.06) 0%, transparent 70%);
+            border-top: 1px solid var(--border);
+        }
+        .cta-inner {
+            text-align: center;
+            max-width: 680px;
+            margin: 0 auto;
+        }
+        .cta-inner h2 {
+            font-family: var(--font-head);
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+        .cta-inner p { color: var(--text-muted); margin-bottom: 40px; font-size: 1rem; }
+        .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+        /* ========== CONTACT FORM ========== */
+        #contact { background: rgba(0,240,255,0.01); }
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+        .contact-info h2 {
+            font-family: var(--font-head);
+            font-size: clamp(1.8rem, 3vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 16px;
+        }
+        .contact-info p { color: var(--text-muted); margin-bottom: 36px; line-height: 1.7; }
+        .contact-details { display: flex; flex-direction: column; gap: 16px; }
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        .contact-detail-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--cyan-dim);
+            border: 1px solid var(--border-strong);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .contact-form {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 40px;
+        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .form-group label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; }
+        .form-group input, .form-group textarea, .form-group select {
+            background: rgba(0,240,255,0.03);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 16px;
+            color: var(--text-primary);
+            font-family: var(--font-body);
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+            resize: none;
+            outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-color: var(--cyan);
+            box-shadow: 0 0 0 3px rgba(0, 240, 255, 0.08);
+        }
+        .form-group textarea { height: 110px; }
+        .form-group select option { background: #0a1020; }
+        .btn-submit { width: 100%; justify-content: center; font-size: 0.95rem; padding: 14px; border-radius: var(--radius-sm); }
+
+        /* ========== FOOTER ========== */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 48px 0;
+        }
+        .footer-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        .footer-copy { font-size: 0.8rem; color: var(--text-dim); }
+        .footer-links { display: flex; gap: 28px; }
+        .footer-links a { font-size: 0.8rem; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+        .footer-links a:hover { color: var(--cyan); }
+        .footer-socials { display: flex; gap: 12px; }
+        .social-btn {
+            width: 36px;
+            height: 36px;
+            background: var(--bg-glass);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        .social-btn:hover { border-color: var(--cyan); background: var(--cyan-dim); transform: translateY(-2px); }
+
+        /* ========== REVEAL ANIMATION ========== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========== MOBILE NAV ========== */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(6, 10, 20, 0.98);
+            z-index: 999;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 36px;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu a { font-family: var(--font-head); font-size: 1.8rem; font-weight: 700; color: var(--text-primary); text-decoration: none; transition: color 0.2s; }
+        .mobile-menu a:hover { color: var(--cyan); }
+        .mobile-menu-close { position: absolute; top: 24px; right: 24px; font-size: 1.5rem; cursor: pointer; color: var(--text-muted); }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .pricing-grid { grid-template-columns: 1fr; max-width: 420px; margin: 0 auto; }
+            .pricing-card.popular { transform: none; }
+            .steps-grid { grid-template-columns: 1fr; }
+            .step-connector { display: none; }
+            .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-cta { display: none; }
+            .hamburger { display: flex; }
+            .features-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .form-row { grid-template-columns: 1fr; }
+            .footer-inner { flex-direction: column; align-items: flex-start; }
+        }
+        @media (max-width: 480px) {
+            .stats-grid { grid-template-columns: 1fr 1fr; }
+            section { padding: 72px 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== NAVBAR ========== -->
+    <nav id="navbar">
+        <div class="container">
+            <div class="nav-inner">
+                <a href="#hero" class="nav-logo">
+                    <div class="nav-logo-icon">⚡</div>
+                    Nexalith
+                </a>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+                <div class="nav-cta">
+                    <a href="#contact" class="btn btn-outline">Talk to Sales</a>
+                    <a href="#pricing" class="btn btn-primary">Get Started →</a>
+                </div>
+                <div class="hamburger" id="hamburger" onclick="toggleMenu()">
+                    <span></span><span></span><span></span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <span class="mobile-menu-close" onclick="toggleMenu()">✕</span>
+        <a href="#features" onclick="toggleMenu()">Features</a>
+        <a href="#pricing" onclick="toggleMenu()">Pricing</a>
+        <a href="#how-it-works" onclick="toggleMenu()">How It Works</a>
+        <a href="#contact" onclick="toggleMenu()">Contact</a>
+        <a href="#pricing" class="btn btn-primary btn-lg" onclick="toggleMenu()">Get Started →</a>
+    </div>
+
+    <!-- ========== HERO ========== -->
+    <section id="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-content">
+            <div class="container">
+                <div class="hero-badge">
+                    <span class="hero-badge-dot"></span>
+                    v2.4 · SOC2 Type II Certified · Zero-Day Response Active
+                </div>
+                <h1 class="hero-title">
+                    Security That's<br>
+                    <span class="gradient-text typewriter-wrapper"><span id="typewriter">SECURE</span></span>
+                </h1>
+                <p class="hero-sub">
+                    Enterprise-grade threat detection, API hardening, and zero-trust architecture powered by AI — built for the infrastructure that can't afford to fail.
+                </p>
+                <div class="hero-buttons">
+                    <a href="#pricing" class="btn btn-primary btn-lg">Start Free Trial →</a>
+                    <a href="#how-it-works" class="btn btn-outline btn-lg">▶ Watch Demo</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-badge"><span class="stat-badge-icon">🛡️</span><span class="stat-badge-text">99.9% Uptime SLA</span></div>
+                    <div class="stat-badge"><span class="stat-badge-icon">⚡</span><span class="stat-badge-text">&lt;2ms Latency</span></div>
+                    <div class="stat-badge"><span class="stat-badge-icon">🔒</span><span class="stat-badge-text">SOC2 Compliant</span></div>
+                    <div class="stat-badge"><span class="stat-badge-icon">🌐</span><span class="stat-badge-text">42+ Regions</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== LOGOS STRIP ========== -->
+    <div id="logos">
+        <div class="container">
+            <p class="logos-label">Trusted by teams at forward-thinking companies</p>
+        </div>
+        <div class="logos-track-wrap">
+            <div class="logos-track" id="logos-track">
+                <span class="logo-item">Vercel</span>
+                <span class="logo-item">Stripe</span>
+                <span class="logo-item">Anthropic</span>
+                <span class="logo-item">OpenAI</span>
+                <span class="logo-item">Cloudflare</span>
+                <span class="logo-item">Supabase</span>
+                <span class="logo-item">PlanetScale</span>
+                <span class="logo-item">Figma</span>
+                <span class="logo-item">Linear</span>
+                <span class="logo-item">Notion</span>
+                <!-- Duplicate for seamless loop -->
+                <span class="logo-item">Vercel</span>
+                <span class="logo-item">Stripe</span>
+                <span class="logo-item">Anthropic</span>
+                <span class="logo-item">OpenAI</span>
+                <span class="logo-item">Cloudflare</span>
+                <span class="logo-item">Supabase</span>
+                <span class="logo-item">PlanetScale</span>
+                <span class="logo-item">Figma</span>
+                <span class="logo-item">Linear</span>
+                <span class="logo-item">Notion</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== FEATURES ========== -->
+    <section id="features">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Core Capabilities</span>
+                <h2>Built For<br>Every Attack Surface</h2>
+                <p>From API fuzzing to graph-based dependency mapping — Nexalith covers your entire threat landscape.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🛡️</div>
+                    <h3>Real-Time Threat Detection</h3>
+                    <p>AI-powered anomaly detection scans 10,000+ events per second. Automated triage escalates critical threats before your on-call team wakes up.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🔌</div>
+                    <h3>API Security Hardening</h3>
+                    <p>Automated schema validation, rate limiting, injection detection, and OAuth2 token audit trails built directly into your API gateway layer.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🕸️</div>
+                    <h3>Graph Dependency Mapping</h3>
+                    <p>Neo4j-powered repository scans map your entire code dependency graph — identifying vulnerable transitive packages before they're exploited.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI Vulnerability Reasoning</h3>
+                    <p>LLM-powered audit engine analyzes CVEs in context of your specific architecture, generating remediation playbooks ranked by actual risk exposure.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Zero Trust Architecture</h3>
+                    <p>Mutual TLS, short-lived certificates, identity-aware proxies, and policy-as-code enforcement across every service-to-service communication layer.</p>
+                </div>
+                <div class="feature-card reveal">
+                    <div class="feature-icon">📊</div>
+                    <h3>Compliance Dashboards</h3>
+                    <p>Automated evidence collection for SOC2, ISO 27001, and GDPR. Audit-ready reports generated in minutes, not weeks of manual documentation work.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== STATS BAR ========== -->
+    <section id="stats">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item reveal">
+                    <span class="stat-number" data-target="500" data-suffix="+">0</span>
+                    <p class="stat-label">Security Audits Completed</p>
+                </div>
+                <div class="stat-item reveal">
+                    <span class="stat-number" data-target="2.4" data-prefix="$" data-suffix="M">$0</span>
+                    <p class="stat-label">Client Assets Protected</p>
+                </div>
+                <div class="stat-item reveal">
+                    <span class="stat-number" data-target="98" data-suffix="%">0</span>
+                    <p class="stat-label">Client Retention Rate</p>
+                </div>
+                <div class="stat-item reveal">
+                    <span class="stat-number" data-target="4.9" data-suffix="★">0</span>
+                    <p class="stat-label">Average Platform Rating</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRICING ========== -->
+    <section id="pricing">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Pricing</span>
+                <h2>Straightforward Pricing.<br>No Hidden Fees.</h2>
+                <p>Scale from startup to enterprise with transparent, usage-based pricing that grows with your team.</p>
+            </div>
+            <div class="pricing-toggle reveal">
+                <span class="toggle-label active" id="monthly-label">Monthly</span>
+                <div class="toggle-switch" id="billing-toggle" onclick="toggleBilling()">
+                    <div class="toggle-knob"></div>
+                </div>
+                <span class="toggle-label" id="annual-label">Annual</span>
+                <span class="annual-badge">Save 20%</span>
+            </div>
+            <div class="pricing-grid reveal">
+                <!-- Starter -->
+                <div class="pricing-card">
+                    <p class="plan-name">Starter</p>
+                    <div class="plan-price"><sup>$</sup><span class="price-val" data-monthly="49" data-annual="39">49</span></div>
+                    <p class="plan-period">per month, billed <span class="billing-period">monthly</span></p>
+                    <div class="plan-divider"></div>
+                    <ul class="plan-features">
+                        <li><span class="check">✓</span> Up to 5 API endpoints monitored</li>
+                        <li><span class="check">✓</span> Real-time threat alerts</li>
+                        <li><span class="check">✓</span> 30-day audit log retention</li>
+                        <li><span class="check">✓</span> Basic vulnerability reports</li>
+                        <li><span class="check">✓</span> Email support</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-plan btn-plan-outline">Get Started →</a>
+                </div>
+                <!-- Pro -->
+                <div class="pricing-card popular">
+                    <div class="popular-badge">⭐ MOST POPULAR</div>
+                    <p class="plan-name">Pro</p>
+                    <div class="plan-price"><sup>$</sup><span class="price-val" data-monthly="149" data-annual="119">149</span></div>
+                    <p class="plan-period">per month, billed <span class="billing-period">monthly</span></p>
+                    <div class="plan-divider"></div>
+                    <ul class="plan-features">
+                        <li><span class="check">✓</span> Unlimited API endpoints</li>
+                        <li><span class="check">✓</span> AI-powered threat reasoning</li>
+                        <li><span class="check">✓</span> Graph dependency mapping</li>
+                        <li><span class="check">✓</span> 1-year audit log retention</li>
+                        <li><span class="check">✓</span> SOC2 evidence collection</li>
+                        <li><span class="check">✓</span> Priority Slack support</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-plan btn-plan-primary">Start Pro Trial →</a>
+                </div>
+                <!-- Enterprise -->
+                <div class="pricing-card">
+                    <p class="plan-name">Enterprise</p>
+                    <div class="plan-price" style="font-size:2rem; padding-top:8px;">Custom</div>
+                    <p class="plan-period">volume-based pricing</p>
+                    <div class="plan-divider"></div>
+                    <ul class="plan-features">
+                        <li><span class="check">✓</span> Dedicated security engineer</li>
+                        <li><span class="check">✓</span> Custom integrations & SLAs</li>
+                        <li><span class="check">✓</span> On-premise deployment option</li>
+                        <li><span class="check">✓</span> GDPR / ISO 27001 support</li>
+                        <li><span class="check">✓</span> 24/7 incident response line</li>
+                        <li><span class="check">✓</span> Quarterly security review</li>
+                    </ul>
+                    <a href="#contact" class="btn btn-plan btn-plan-outline">Contact Sales →</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== HOW IT WORKS ========== -->
+    <section id="how-it-works" style="background: rgba(0,240,255,0.01);">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Process</span>
+                <h2>Up and Running<br>In 3 Steps</h2>
+                <p>From zero to a fully monitored security posture in under 15 minutes. No infrastructure changes required.</p>
+            </div>
+            <div class="steps-grid reveal">
+                <div class="step-card">
+                    <span class="step-number">STEP 01</span>
+                    <div class="step-icon">🔌</div>
+                    <h3>Connect</h3>
+                    <p>Install the Nexalith SDK or point your API gateway to our edge proxy. Works with any stack — REST, GraphQL, gRPC, or WebSockets.</p>
+                </div>
+                <div class="step-connector">
+                    <span class="step-connector-arrow">→</span>
+                </div>
+                <div class="step-card">
+                    <span class="step-number">STEP 02</span>
+                    <div class="step-icon">🔍</div>
+                    <h3>Scan</h3>
+                    <p>Our AI engine automatically maps your dependency graph, runs OWASP checks, and identifies exposed secrets across every connected surface.</p>
+                </div>
+                <div class="step-connector">
+                    <span class="step-connector-arrow">→</span>
+                </div>
+                <div class="step-card">
+                    <span class="step-number">STEP 03</span>
+                    <div class="step-icon">🛡️</div>
+                    <h3>Secure</h3>
+                    <p>Apply AI-generated remediation playbooks, configure zero-trust policies, and activate real-time monitoring — all from a single dashboard.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== TESTIMONIALS ========== -->
+    <section id="testimonials">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-tag">Testimonials</span>
+                <h2>Trusted By Security Teams<br>Around The World</h2>
+            </div>
+        </div>
+        <div class="testimonials-track-wrap reveal">
+            <div class="testimonials-track" id="testimonials-track">
+                <!-- Cards set 1 -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Nexalith caught a critical SQL injection in our staging API that had been sitting undetected for 6 months. The graph dependency map alone is worth the subscription."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#00f0ff,#0040ff);">AK</div>
+                        <div><div class="testimonial-name">Arjun Kapoor</div><div class="testimonial-role">CTO · Fintech Startup, Mumbai</div></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"We passed our SOC2 Type II audit in 8 weeks with Nexalith generating the evidence collection automatically. What used to take months is now a dashboard click."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#bd00ff,#ff0055);">SR</div>
+                        <div><div class="testimonial-name">Sofia Reyes</div><div class="testimonial-role">Head of Compliance · SaaS Platform, Berlin</div></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"The AI reasoning engine doesn't just flag vulnerabilities — it explains exactly why they're dangerous in our specific context and gives prioritized fix sequences."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#ffaa00,#ff4400);">TN</div>
+                        <div><div class="testimonial-name">Thomas Nguyen</div><div class="testimonial-role">Lead Engineer · DevOps Agency, Singapore</div></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Zero-trust policy configuration used to require weeks of DevSecOps work. With Nexalith it's a wizard — 20 minutes and our entire microservices mesh was locked down."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#00f0ff,#00aa55);">LP</div>
+                        <div><div class="testimonial-name">Laura Petrov</div><div class="testimonial-role">Security Architect · Healthtech, London</div></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"After a near-miss with a supply chain attack, we moved our entire stack to Nexalith. Within 3 days it flagged 4 malicious packages in our transitive dependencies."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#bd00ff,#00f0ff);">MH</div>
+                        <div><div class="testimonial-name">Marcus Hoffman</div><div class="testimonial-role">Engineering Manager · E-Commerce, Amsterdam</div></div>
+                    </div>
+                </div>
+                <!-- Duplicate set for seamless loop -->
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Nexalith caught a critical SQL injection in our staging API that had been sitting undetected for 6 months. The graph dependency map alone is worth the subscription."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#00f0ff,#0040ff);">AK</div>
+                        <div><div class="testimonial-name">Arjun Kapoor</div><div class="testimonial-role">CTO · Fintech Startup, Mumbai</div></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"We passed our SOC2 Type II audit in 8 weeks with Nexalith generating the evidence collection automatically. What used to take months is now a dashboard click."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#bd00ff,#ff0055);">SR</div>
+                        <div><div class="testimonial-name">Sofia Reyes</div><div class="testimonial-role">Head of Compliance · SaaS Platform, Berlin</div></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"The AI reasoning engine doesn't just flag vulnerabilities — it explains exactly why they're dangerous in our specific context and gives prioritized fix sequences."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#ffaa00,#ff4400);">TN</div>
+                        <div><div class="testimonial-name">Thomas Nguyen</div><div class="testimonial-role">Lead Engineer · DevOps Agency, Singapore</div></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"Zero-trust policy configuration used to require weeks of DevSecOps work. With Nexalith it's a wizard — 20 minutes and our entire microservices mesh was locked down."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#00f0ff,#00aa55);">LP</div>
+                        <div><div class="testimonial-name">Laura Petrov</div><div class="testimonial-role">Security Architect · Healthtech, London</div></div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"After a near-miss with a supply chain attack, we moved our entire stack to Nexalith. Within 3 days it flagged 4 malicious packages in our transitive dependencies."</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar" style="background:linear-gradient(135deg,#bd00ff,#00f0ff);">MH</div>
+                        <div><div class="testimonial-name">Marcus Hoffman</div><div class="testimonial-role">Engineering Manager · E-Commerce, Amsterdam</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CTA SECTION ========== -->
+    <section id="cta">
+        <div class="container">
+            <div class="cta-inner reveal">
+                <span class="section-tag">Get Started Today</span>
+                <h2>Your Infrastructure<br>Deserves Better.</h2>
+                <p>Join 500+ engineering teams that trust Nexalith to protect their most critical systems. Start your 14-day free trial — no credit card required.</p>
+                <div class="cta-buttons">
+                    <a href="#pricing" class="btn btn-primary btn-lg">Start Free Trial →</a>
+                    <a href="#contact" class="btn btn-outline btn-lg">Talk to Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CONTACT ========== -->
+    <section id="contact">
+        <div class="container">
+            <div class="contact-grid">
+                <div class="contact-info reveal">
+                    <span class="section-tag">Contact</span>
+                    <h2>Let's Talk<br>Security.</h2>
+                    <p>Whether you need a custom enterprise plan, a security consultation, or just want to see a live demo — our team is ready to help.</p>
+                    <div class="contact-details">
+                        <div class="contact-detail">
+                            <div class="contact-detail-icon">📧</div>
+                            <span>security@nexalith.io</span>
+                        </div>
+                        <div class="contact-detail">
+                            <div class="contact-detail-icon">📅</div>
+                            <span>Book a 30-min demo call</span>
+                        </div>
+                        <div class="contact-detail">
+                            <div class="contact-detail-icon">⚡</div>
+                            <span>Response time: under 2 hours</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form reveal">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fname">First Name</label>
+                            <input type="text" id="fname" placeholder="Arjun">
+                        </div>
+                        <div class="form-group">
+                            <label for="lname">Last Name</label>
+                            <input type="text" id="lname" placeholder="Kapoor">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Work Email</label>
+                        <input type="email" id="email" placeholder="arjun@company.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="plan-select">Interested In</label>
+                        <select id="plan-select">
+                            <option value="">Select a plan or topic...</option>
+                            <option>Starter Plan ($49/mo)</option>
+                            <option>Pro Plan ($149/mo)</option>
+                            <option>Enterprise / Custom</option>
+                            <option>Security Consultation</option>
+                            <option>Live Demo Request</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Message</label>
+                        <textarea id="message" placeholder="Tell us about your infrastructure and what you're looking to secure..."></textarea>
+                    </div>
+                    <button class="btn btn-primary btn-submit" onclick="handleSubmit(this)">Send Message →</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer>
+        <div class="container">
+            <div class="footer-inner">
+                <div>
+                    <a href="#hero" class="nav-logo" style="margin-bottom:8px; display:inline-flex;">
+                        <div class="nav-logo-icon">⚡</div>
+                        Nexalith
+                    </a>
+                    <p class="footer-copy" style="margin-top:8px;">© 2025 Nexalith Security Inc. All rights reserved.</p>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">Security</a>
+                    <a href="#">Status</a>
+                </div>
+                <div class="footer-socials">
+                    <a href="#" class="social-btn" title="Twitter/X">𝕏</a>
+                    <a href="#" class="social-btn" title="LinkedIn">in</a>
+                    <a href="#" class="social-btn" title="GitHub">⌥</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ========== JAVASCRIPT ========== -->
+    <script>
+        // --- Navbar scroll effect ---
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            navbar.classList.toggle('scrolled', window.scrollY > 40);
+        });
+
+        // --- Mobile Menu ---
+        function toggleMenu() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+        }
+
+        // --- Hero Particle Canvas ---
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animFrameId;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() { this.reset(); }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 1.5 + 0.3;
+                this.speedX = (Math.random() - 0.5) * 0.35;
+                this.speedY = (Math.random() - 0.5) * 0.35;
+                this.opacity = Math.random() * 0.5 + 0.1;
+                this.color = Math.random() > 0.65 ? '#00f0ff' : '#bd00ff';
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = this.opacity;
+                ctx.fillStyle = this.color;
+                ctx.shadowBlur = 8;
+                ctx.shadowColor = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            const count = Math.floor((canvas.width * canvas.height) / 8000);
+            for (let i = 0; i < Math.min(count, 180); i++) particles.push(new Particle());
+        }
+        initParticles();
+        window.addEventListener('resize', initParticles);
+
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 120) {
+                        ctx.save();
+                        ctx.globalAlpha = (1 - dist / 120) * 0.08;
+                        ctx.strokeStyle = '#00f0ff';
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                        ctx.restore();
+                    }
+                }
+            }
+        }
+
+        // Draw grid
+        function drawGrid() {
+            ctx.save();
+            ctx.strokeStyle = 'rgba(0, 240, 255, 0.03)';
+            ctx.lineWidth = 1;
+            const gridSize = 60;
+            for (let x = 0; x < canvas.width; x += gridSize) {
+                ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+            }
+            for (let y = 0; y < canvas.height; y += gridSize) {
+                ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+            }
+            ctx.restore();
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            drawGrid();
+            drawConnections();
+            particles.forEach(p => { p.update(); p.draw(); });
+            animFrameId = requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // --- Typewriter Effect ---
+        const words = ['SECURE', 'SCALABLE', 'DEPLOYED', 'RESILIENT', 'COMPLIANT'];
+        let wordIndex = 0, charIndex = 0, isDeleting = false;
+        const typeEl = document.getElementById('typewriter');
+
+        function typeWriter() {
+            const currentWord = words[wordIndex];
+            if (isDeleting) {
+                typeEl.textContent = currentWord.slice(0, charIndex--);
+            } else {
+                typeEl.textContent = currentWord.slice(0, charIndex++);
+            }
+            let speed = isDeleting ? 60 : 110;
+            if (!isDeleting && charIndex > currentWord.length) {
+                speed = 1800;
+                isDeleting = true;
+            } else if (isDeleting && charIndex < 0) {
+                isDeleting = false;
+                charIndex = 0;
+                wordIndex = (wordIndex + 1) % words.length;
+                speed = 300;
+            }
+            setTimeout(typeWriter, speed);
+        }
+        typeWriter();
+
+        // --- Scroll Reveal ---
+        const revealEls = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 80);
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.12 });
+        revealEls.forEach(el => revealObserver.observe(el));
+
+        // --- Animated Counters ---
+        function animateCounter(el) {
+            const target = parseFloat(el.dataset.target);
+            const prefix = el.dataset.prefix || '';
+            const suffix = el.dataset.suffix || '';
+            const isDecimal = target % 1 !== 0;
+            const duration = 2000;
+            const start = performance.now();
+
+            function update(now) {
+                const elapsed = now - start;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const current = target * eased;
+                el.textContent = prefix + (isDecimal ? current.toFixed(1) : Math.floor(current)) + suffix;
+                if (progress < 1) requestAnimationFrame(update);
+            }
+            requestAnimationFrame(update);
+        }
+
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    counterObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('.stat-number[data-target]').forEach(el => counterObserver.observe(el));
+
+        // --- Pricing Toggle ---
+        let isAnnual = false;
+        function toggleBilling() {
+            isAnnual = !isAnnual;
+            const toggle = document.getElementById('billing-toggle');
+            const mLabel = document.getElementById('monthly-label');
+            const aLabel = document.getElementById('annual-label');
+            toggle.classList.toggle('annual', isAnnual);
+            mLabel.classList.toggle('active', !isAnnual);
+            aLabel.classList.toggle('active', isAnnual);
+
+            document.querySelectorAll('.price-val').forEach(el => {
+                el.textContent = isAnnual ? el.dataset.annual : el.dataset.monthly;
+            });
+            document.querySelectorAll('.billing-period').forEach(el => {
+                el.textContent = isAnnual ? 'annually' : 'monthly';
+            });
+        }
+
+        // --- Contact Form Submit ---
+        function handleSubmit(btn) {
+            btn.textContent = '✓ Message Sent!';
+            btn.style.background = '#00aa55';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = 'Send Message →';
+                btn.style.background = '';
+                btn.disabled = false;
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
