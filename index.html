@@ -1666,7 +1666,7 @@
             const ctx = canvas.getContext("2d");
             
             // Rich golden base
-            ctx.fillStyle = "#ffd700";
+            ctx.fillStyle = "#ffe04d"; // Brighter golden base
             ctx.fillRect(0, 0, 256, 256);
             
             // Faint golden engraving lines
@@ -1774,6 +1774,16 @@
             spotLight.shadow.bias = -0.001;
             scene.add(spotLight);
             scene.add(spotLight.target);
+
+            // Saturated golden front highlight light
+            const goldPointLight = new THREE.PointLight(0xffb300, 2.2, 14);
+            goldPointLight.position.set(0, 1.2, 4.5);
+            scene.add(goldPointLight);
+
+            // Sci-fi cyan uplight for mountain/terrain relief
+            const landscapeLight = new THREE.DirectionalLight(0x00f0ff, 0.6);
+            landscapeLight.position.set(0, -5, 5);
+            scene.add(landscapeLight);
 
             // Compile dynamic materials
             const textures = createRockTexture();
@@ -1977,9 +1987,9 @@
                 bumpMap: goldTex.bumpMap, // Custom swirls bump engravings
                 bumpScale: 0.02,
                 color: 0xd4af37, 
-                metalness: 0.98,
-                roughness: 0.14,
-                emissive: 0x221a05,
+                metalness: 0.45, // Lower metalness to allow warm golden diffuse colors
+                roughness: 0.22, // Slick glossiness
+                emissive: 0x4a3b10, // Rich warm self-emissiveness
                 emissiveIntensity: 0.25
             });
 
