@@ -97,14 +97,15 @@
             transition: background-color 0.3s, color 0.3s;
         }
 
-        /* 3D Preloader Screen */
+        /* 3D Preloader Screen (Always Dark & Atmospheric for Cinematic intro) */
         #preloader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #05080c;
+            background: #030508; /* Obsidian base */
+            color: #f8fafc;
             z-index: 99999;
             overflow: hidden;
             display: flex;
@@ -137,10 +138,10 @@
             pointer-events: none;
             max-width: 480px;
             padding: 20px;
-            margin-top: -60px; /* Offset upward slightly to align logo */
+            margin-top: -90px; /* Aligns container neatly above target OM site */
         }
 
-        /* Logo is hidden initially and slides/grows on impact */
+        /* Logo reveal transitions */
         .preloader-logo-reveal {
             opacity: 0;
             transform: scale(0.65) translateY(40px);
@@ -149,12 +150,11 @@
             filter: drop-shadow(0 0 20px rgba(0, 240, 255, 0.35));
         }
 
-        /* Subtitles hidden on load */
         .preloader-title {
             opacity: 0;
             font-family: var(--font-display);
             font-size: 0.95rem;
-            color: var(--cyan);
+            color: #00f0ff; /* Fixed cyan for cinematic preloader */
             letter-spacing: 0.2em;
             font-weight: 800;
             text-shadow: 0 0 10px rgba(0, 240, 255, 0.3);
@@ -700,6 +700,20 @@
 
         .service-card:hover .service-img-container img {
             transform: scale(1.03);
+        }
+
+        .service-info {
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .service-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 20px;
         }
 
         .service-info {
@@ -1542,10 +1556,6 @@
             updateContraTheme("light");
             activeThemeColor = "#0284c7";
             activeBgColor = "#f3efe9";
-            if (preloader) {
-                preloader.style.background = "#f3efe9";
-                document.getElementById("preloader-text").style.color = "#0284c7";
-            }
         } else {
             themeToggle.textContent = "🌙";
             updateContraTheme("dark");
@@ -1565,7 +1575,7 @@
             localStorage.setItem("theme", theme);
         });
 
-        // 2. High-End 3D Trishul Landing Scene (Three.js)
+        // 2. High-End 3D Trishul Landing Scene (Three.js) - ALWAYS moody dark preloader
         let scene, camera, renderer, trishulGroup, gridHelper;
         let particles, particlePositions, particleVelocities;
         let landingTriggered = false;
@@ -1575,6 +1585,8 @@
         let shakeIntensity = 0;
         let omMesh;
         let lightningLines = [];
+        const cinematicBgColor = "#05080c"; // Lock preloader background color to dark storm
+        const cinematicThemeColor = "#00f0ff"; // Lock preloader highlight color to cyan
 
         function init3DLoader() {
             const container = document.getElementById("three-container");
@@ -1582,15 +1594,15 @@
 
             // Scene setup
             scene = new THREE.Scene();
-            scene.background = new THREE.Color(activeBgColor);
+            scene.background = new THREE.Color(cinematicBgColor);
             
-            // Volumetric mist fog matching landscape
-            scene.fog = new THREE.FogExp2(activeBgColor, 0.045);
+            // Misty storm fog (Image 1 misty mountains look)
+            scene.fog = new THREE.FogExp2(cinematicBgColor, 0.045);
 
-            // Camera setup
+            // Camera setup - Centered composition to show the full Trishul
             camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
-            camera.position.set(0, 5, 12);
-            camera.lookAt(0, 1.5, 0);
+            camera.position.set(0, 1.5, 14);
+            camera.lookAt(0, 0, 0);
 
             // Renderer setup
             renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: "high-performance" });
@@ -1606,59 +1618,74 @@
                 renderer.setSize(container.clientWidth, container.clientHeight);
             });
 
-            // Lighting Setup - Cinematic 3-Point Setup
-            const ambient = new THREE.AmbientLight(0xffffff, currentTheme === "light" ? 0.65 : 0.3);
+            // Lighting Setup - Reduced intensities to prevent flat white blowout
+            const ambient = new THREE.AmbientLight(0xffffff, 0.35);
             scene.add(ambient);
 
-            // Warm Key Light (Golden specular highlights)
-            const keyLight = new THREE.DirectionalLight(0xffeebb, 2.5);
-            keyLight.position.set(6, 12, 6);
+            // Warm Key Light (Specular golden reflections on Trishul)
+            const keyLight = new THREE.DirectionalLight(0xffeebb, 1.0);
+            keyLight.position.set(5, 10, 5);
             scene.add(keyLight);
 
             // Cool Fill Light (balances shadow regions)
-            const fillLight = new THREE.DirectionalLight(0x88bbff, 1.2);
-            fillLight.position.set(-6, 6, -6);
+            const fillLight = new THREE.DirectionalLight(0x88bbff, 0.4);
+            fillLight.position.set(-5, 5, -5);
             scene.add(fillLight);
 
-            // Rim Light (shining from behind for neon edges)
-            const rimLight = new THREE.DirectionalLight(0xffffff, 2.0);
-            rimLight.position.set(0, 4, -10);
+            // Rim Light (contour highlight)
+            const rimLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            rimLight.position.set(0, 3, -8);
             scene.add(rimLight);
 
             // Target spot spotlight
-            const spotLight = new THREE.SpotLight(activeThemeColor, 3, 25, Math.PI / 4, 0.5, 1);
-            spotLight.position.set(0, 15, 0);
+            const spotLight = new THREE.SpotLight(cinematicThemeColor, 1.5, 25, Math.PI / 4, 0.5, 1);
+            spotLight.position.set(0, 12, 0);
             spotLight.target.position.set(0, -3, 0);
             scene.add(spotLight);
             scene.add(spotLight.target);
 
-            // Jagged misty mountains (low-poly background landscape)
+            // Jagged misty mountains with vertex noise displacement (Image 1 style)
             const mountainGroup = new THREE.Group();
-            const mtGeo = new THREE.ConeGeometry(8, 12, 4);
+            const mtGeo1 = new THREE.ConeGeometry(8, 12, 5, 5);
+            const mtGeo2 = new THREE.ConeGeometry(10, 14, 5, 5);
+            const mtGeo3 = new THREE.ConeGeometry(6, 8, 5, 5);
             const mtMat = new THREE.MeshStandardMaterial({
-                color: currentTheme === "light" ? 0xa1a1aa : 0x111c28,
+                color: 0x111c28,
                 roughness: 0.95,
                 metalness: 0.05
             });
 
-            const mt1 = new THREE.Mesh(mtGeo, mtMat);
+            // Manually add vertex displacement noise for realistic rock geometry
+            [mtGeo1, mtGeo2, mtGeo3].forEach(geom => {
+                const pos = geom.attributes.position;
+                for (let i = 0; i < pos.count; i++) {
+                    const y = pos.getY(i);
+                    if (y > -5) {
+                        pos.setX(i, pos.getX(i) + (Math.random() - 0.5) * 0.7);
+                        pos.setZ(i, pos.getZ(i) + (Math.random() - 0.5) * 0.7);
+                    }
+                }
+                geom.computeVertexNormals();
+            });
+
+            const mt1 = new THREE.Mesh(mtGeo1, mtMat);
             mt1.position.set(-8, 1, -14);
             mt1.rotation.y = Math.PI / 4;
             mountainGroup.add(mt1);
 
-            const mt2 = new THREE.Mesh(new THREE.ConeGeometry(10, 14, 4), mtMat);
+            const mt2 = new THREE.Mesh(mtGeo2, mtMat);
             mt2.position.set(6, 2, -16);
             mt2.rotation.y = 0.2;
             mountainGroup.add(mt2);
 
-            const mt3 = new THREE.Mesh(new THREE.ConeGeometry(6, 8, 4), mtMat);
+            const mt3 = new THREE.Mesh(mtGeo3, mtMat);
             mt3.position.set(-1, -1, -11);
             mt3.rotation.y = 0.8;
             mountainGroup.add(mt3);
 
             scene.add(mountainGroup);
 
-            // Meditating Lord Shiva Silhouette (placed in far clouds)
+            // Meditating Lord Shiva Silhouette in clouds
             const shivaShape = new THREE.Shape();
             shivaShape.moveTo(0, 3.5);
             shivaShape.bezierCurveTo(0.2, 3.5, 0.35, 3.0, 0.2, 2.7);
@@ -1679,21 +1706,31 @@
 
             const shivaGeo = new THREE.ShapeGeometry(shivaShape);
             const shivaMat = new THREE.MeshBasicMaterial({
-                color: currentTheme === "light" ? 0x64748b : 0x070c14,
+                color: 0x070c14,
                 transparent: true,
-                opacity: 0.16,
+                opacity: 0.15,
                 depthWrite: false
             });
             const shivaMesh = new THREE.Mesh(shivaGeo, shivaMat);
-            shivaMesh.position.set(0, 2.5, -18);
-            shivaMesh.scale.set(2.2, 2.2, 1);
+            shivaMesh.position.set(0, 2.8, -18);
+            shivaMesh.scale.set(2.4, 2.4, 1);
             scene.add(shivaMesh);
 
-            // Floating storm debris rocks (Image 3 style)
+            // Floating storm debris rocks (rough vertex noise, Image 3 style)
             const rocksGroup = new THREE.Group();
             const rockGeo = new THREE.DodecahedronGeometry(0.3, 1);
+            
+            // Displace rock vertices to make them look rough/jagged
+            const rockPos = rockGeo.attributes.position;
+            for(let i=0; i<rockPos.count; i++) {
+                rockPos.setX(i, rockPos.getX(i) + (Math.random() - 0.5) * 0.08);
+                rockPos.setY(i, rockPos.getY(i) + (Math.random() - 0.5) * 0.08);
+                rockPos.setZ(i, rockPos.getZ(i) + (Math.random() - 0.5) * 0.08);
+            }
+            rockGeo.computeVertexNormals();
+
             const rockMat = new THREE.MeshStandardMaterial({
-                color: currentTheme === "light" ? 0x78716c : 0x1f2937,
+                color: 0x1e293b, // Dark slate
                 roughness: 0.9,
                 metalness: 0.1
             });
@@ -1704,20 +1741,20 @@
                 const r = Math.random() * 8 + 4;
                 const y = Math.random() * 8 - 1;
                 rock.position.set(Math.cos(angle) * r, y, Math.sin(angle) * r);
-                rock.scale.setScalar(Math.random() * 0.7 + 0.35);
+                rock.scale.setScalar(Math.random() * 0.65 + 0.3);
                 rocksGroup.add(rock);
                 window.debrisRocks.push({
                     mesh: rock,
                     seed: Math.random() * 100,
-                    speed: Math.random() * 0.02 + 0.01
+                    speed: Math.random() * 0.015 + 0.008
                 });
             }
             scene.add(rocksGroup);
 
-            // Glowing Tactical Grid Ground
-            gridHelper = new THREE.GridHelper(30, 30, activeThemeColor, activeThemeColor);
+            // Tactical Grid Ground
+            gridHelper = new THREE.GridHelper(30, 30, cinematicThemeColor, cinematicThemeColor);
             gridHelper.position.y = -3;
-            gridHelper.material.opacity = 0.15;
+            gridHelper.material.opacity = 0.12;
             gridHelper.material.transparent = true;
             scene.add(gridHelper);
 
@@ -1730,8 +1767,8 @@
             ctxOM.font = "bold 260px sans-serif";
             ctxOM.textAlign = "center";
             ctxOM.textBaseline = "middle";
-            ctxOM.fillStyle = activeThemeColor;
-            ctxOM.shadowColor = activeThemeColor;
+            ctxOM.fillStyle = cinematicThemeColor;
+            ctxOM.shadowColor = cinematicThemeColor;
             ctxOM.shadowBlur = 45;
             ctxOM.fillText("ॐ", 256, 256);
 
@@ -1740,7 +1777,7 @@
             const omMat = new THREE.MeshBasicMaterial({
                 map: omTexture,
                 transparent: true,
-                opacity: 0, // Hidden until collision impact
+                opacity: 0, 
                 depthWrite: false
             });
             omMesh = new THREE.Mesh(omGeo, omMat);
@@ -1825,7 +1862,7 @@
             damruGroup.position.y = -0.8;
             trishulGroup.add(damruGroup);
 
-            // Two hanging red ribbon banners (realistic spline tube geometry)
+            // Two hanging red ribbon banners
             const ribbonMat = new THREE.MeshStandardMaterial({
                 color: 0xbe185d,
                 roughness: 0.85
@@ -1857,7 +1894,7 @@
             // Glowing Shockwave impact Ring
             const ringGeo2 = new THREE.RingGeometry(0.1, 2.5, 32);
             const ringMat2 = new THREE.MeshBasicMaterial({
-                color: activeThemeColor,
+                color: cinematicThemeColor,
                 side: THREE.DoubleSide,
                 transparent: true,
                 opacity: 0
@@ -1889,7 +1926,7 @@
 
             pGeometry.setAttribute('position', new THREE.BufferAttribute(particlePositions, 3));
             const pMaterial = new THREE.PointsMaterial({
-                color: activeThemeColor,
+                color: cinematicThemeColor,
                 size: 0.15,
                 transparent: true,
                 opacity: 0
@@ -1902,7 +1939,6 @@
 
         // Programmatic lightning generator (Background Thunder flash)
         function createLightning() {
-            // Clear any active bolt
             lightningLines.forEach(l => scene.remove(l));
             lightningLines = [];
 
@@ -1928,7 +1964,7 @@
 
             const geom = new THREE.BufferGeometry().setFromPoints(points);
             const mat = new THREE.LineBasicMaterial({
-                color: activeThemeColor === "#0284c7" ? 0xbe185d : 0xffffff,
+                color: 0xffffff,
                 linewidth: 3
             });
             const line = new THREE.Line(geom, mat);
@@ -1938,7 +1974,7 @@
             // Screen Flash
             const oldBg = scene.background.clone();
             const oldFog = scene.fog.color.clone();
-            const flashColor = activeThemeColor === "#0284c7" ? 0xffeef5 : 0xe0f7ff;
+            const flashColor = 0xe0f7ff;
             scene.background.set(flashColor);
             scene.fog.color.set(flashColor);
 
@@ -1948,7 +1984,6 @@
                 lightningLines.forEach(l => scene.remove(l));
             }, 60);
 
-            // Occasional double strike
             if (Math.random() > 0.5) {
                 setTimeout(createLightning, 120);
             }
@@ -1984,7 +2019,6 @@
             scene.background.set(0xffffff);
             scene.fog.color.set(0xffffff);
 
-            // Ignite OM glow
             omMesh.material.opacity = 0.95;
 
             setTimeout(() => {
@@ -2009,11 +2043,11 @@
                 landingTriggered = true;
                 trishulGroup.position.y = -2.2;
                 trishulGroup.rotation.set(0, 0, 0); 
-                shakeIntensity = 0.38; // camera shake
-                shockwaveRing.material.opacity = 0.8; // shockwave wave
-                particles.material.opacity = 1.0; // sparks
+                shakeIntensity = 0.38; 
+                shockwaveRing.material.opacity = 0.8; 
+                particles.material.opacity = 1.0; 
 
-                // Volumetric lightning strike direct to spear tip
+                // Strike lightning
                 strikeTrishul();
 
                 // 3. COLLISION REVEAL ANIMATION (Emerging logo floats up)
@@ -2047,11 +2081,11 @@
             // 4. Camera Shake
             if (shakeIntensity > 0) {
                 camera.position.x = (Math.random() - 0.5) * shakeIntensity;
-                camera.position.y = 5 + (Math.random() - 0.5) * shakeIntensity;
+                camera.position.y = 1.5 + (Math.random() - 0.5) * shakeIntensity; // Shakes around base camera height
                 shakeIntensity *= 0.92;
             } else {
                 camera.position.x = 0;
-                camera.position.y = 5;
+                camera.position.y = 1.5;
             }
 
             // 5. Physics Simulated Particles
@@ -2084,7 +2118,7 @@
             // Camera drift orbit
             if (landingTriggered) {
                 camera.position.x += Math.sin(elapsedFrames * 0.005) * 0.005;
-                camera.position.z = 12 + Math.cos(elapsedFrames * 0.005) * 0.1;
+                camera.position.z = 14 + Math.cos(elapsedFrames * 0.005) * 0.1;
                 trishulGroup.rotation.y += 0.003; 
             }
 
